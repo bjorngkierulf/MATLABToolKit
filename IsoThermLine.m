@@ -9,7 +9,7 @@ function Out = IsoThermLine(T,Table)
        Vg = Table.Sat.vg;
        
        SatState.T = T;
-       SatState.P = interp1(Press,Temp,T,'linear','extrap'); 
+       SatState.P = interp1(Temp,Press,T,'linear','extrap'); 
        SatState.vf = interp1(Temp,Vf,T,'linear','extrap'); 
        SatState.vg = interp1(Temp,Vg,T,'linear','extrap');
 
