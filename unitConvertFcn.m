@@ -12,39 +12,39 @@ function newVal = unitConvertFcn(oldVal,oldUnits,newUnits)
 %Define conversion factors and names for each type of unit
 
 %Pressure
-press = {'kPa','bar','Pa','MPa','psi','psf'};
+press = {'bar','kPa','Pa','MPa','psi','psf'};
 psiToKpa = 6.89476;
 psfToKpa = psiToKpa / 12^2; %=0.0479;
-pressConversion = [1, 100, 0.001, 1000, psiToKpa, psfToKpa];
-pressOldIndex = strcmp(press,oldUnits)
+pressConversion = [1, .01, 0.00001, 10, psiToKpa/100, psfToKpa/100];
+pressOldIndex = strcmp(press,oldUnits);
 
 %Specific volume
 vol = {'m3_kg','L_kg'};
 volConversion = [1, 0.001];
-volOldIndex = strcmp(vol,oldUnits)
+volOldIndex = strcmp(vol,oldUnits);
 
 %Temperature
 temp = {'C','K','R','F'};
 tempConversionScale = [1, 1, 5/9, 5/9];
 tempConversionOffset = [0, -273.15, -491.67, -32];
-tempOldIndex = strcmp(temp,oldUnits)
+tempOldIndex = strcmp(temp,oldUnits);
 
 %Energy
 energy = {'kJ','J'};
 energyConversion = [1,0.001];
-energyOldIndex = strcmp(energy,oldUnits)
+energyOldIndex = strcmp(energy,oldUnits);
 
 %Specific energy
 specEnergy = {'kJ_kg','J_kg','Btu_lb'};
 kJ_kgToBtu_lb =  2.3260; %1/0.429923;
 specEnergyConversion = [1, 0.001, kJ_kgToBtu_lb];
-specEnergyOldIndex = strcmp(specEnergy,oldUnits)
+specEnergyOldIndex = strcmp(specEnergy,oldUnits);
 
 %specific entropy: 
 specEntropy = {'kJ_kgK','J_kgK','Btu_lbR'};
 kJ_kgKToBtu_lbR =  4.1868; %kJ_kgToBtu_lb * 5/9; %=0.2388459
 specEntropyConversion = [1, 0.001, kJ_kgKToBtu_lbR];
-specEntropyOldIndex = strcmp(specEntropy,oldUnits)
+specEntropyOldIndex = strcmp(specEntropy,oldUnits);
 
 
 if sum(pressOldIndex) + sum(volOldIndex) + sum(tempOldIndex) ...
@@ -53,12 +53,17 @@ if sum(pressOldIndex) + sum(volOldIndex) + sum(tempOldIndex) ...
     fprintf("Units match double?") %this should never happen
 end
 
+%
+% if strcmp(newUnits,'default')   
+%     %convert to the default units and be done with it
+    
+    
 if sum(pressOldIndex) > 0
     %standard unit is kPa   
     conversionArray = pressConversion;
     oldIndex = pressOldIndex;
     newIndex = strcmp(press,newUnits);
-    conversionOffset = zeros(size(press));    
+    conversionOffset = zeros(size(press));
     
 elseif sum(volOldIndex) > 0
     %standard unit is m3/kg
@@ -100,8 +105,17 @@ else
     fprintf(strcat("First (old) units are unrecognized: ", oldUnits))
     
 end
+
+%debugging
+% strcmp(newUnits,'default');
+% newIndex == 0;
+
+if all(newIndex == 0) && strcmp(newUnits,'default')
+    %so nothing matched, other than default
+    newIndex = 1;
+    %this hard codes the first index in the unit list as the default
     
-if newIndex == 0
+elseif all(newIndex == 0)
     %this means that they entered the first unit correctly, but the second
     %one didn't match
     fprintf(strcat("Second (new) Units are unrecognized or do not match: ", newUnits))
