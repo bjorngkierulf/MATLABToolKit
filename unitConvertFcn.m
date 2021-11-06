@@ -11,41 +11,47 @@ function newVal = unitConvertFcn(oldVal,oldUnits,newUnits)
 
 %Define conversion factors and names for each type of unit
 
-%Pressure
+ %Pressure
 press = {'bar','kPa','Pa','MPa','psi','psf'};
 psiToKpa = 6.89476;
 psfToKpa = psiToKpa / 12^2; %=0.0479;
 pressConversion = [1, .01, 0.00001, 10, psiToKpa/100, psfToKpa/100];
 pressOldIndex = strcmp(press,oldUnits);
+pressNewIndex = strcmp(press,newUnits);
 
 %Specific volume
 vol = {'m3_kg','L_kg'};
 volConversion = [1, 0.001];
 volOldIndex = strcmp(vol,oldUnits);
+volNewIndex = strcmp(vol,newUnits);
+
 
 %Temperature
 temp = {'C','K','R','F'};
 tempConversionScale = [1, 1, 5/9, 5/9];
 tempConversionOffset = [0, -273.15, -491.67, -32];
 tempOldIndex = strcmp(temp,oldUnits);
+tempNewIndex = strcmp(temp,newUnits);
 
 %Energy
 energy = {'kJ','J'};
 energyConversion = [1,0.001];
 energyOldIndex = strcmp(energy,oldUnits);
+energyNewIndex = strcmp(energy,newUnits);
 
 %Specific energy
 specEnergy = {'kJ_kg','J_kg','Btu_lb'};
 kJ_kgToBtu_lb =  2.3260; %1/0.429923;
 specEnergyConversion = [1, 0.001, kJ_kgToBtu_lb];
 specEnergyOldIndex = strcmp(specEnergy,oldUnits);
+specEnergyNewIndex = strcmp(specEnergy,newUnits);
 
 %specific entropy: 
 specEntropy = {'kJ_kgK','J_kgK','Btu_lbR'};
 kJ_kgKToBtu_lbR =  4.1868; %kJ_kgToBtu_lb * 5/9; %=0.2388459
 specEntropyConversion = [1, 0.001, kJ_kgKToBtu_lbR];
 specEntropyOldIndex = strcmp(specEntropy,oldUnits);
-
+specEntropyNewIndex = strcmp(specEntropy,newUnits);
 
 if sum(pressOldIndex) + sum(volOldIndex) + sum(tempOldIndex) ...
         + sum(energyOldIndex) + sum(specEnergyOldIndex) ...
@@ -58,47 +64,65 @@ end
 %     %convert to the default units and be done with it
     
     
-if sum(pressOldIndex) > 0
+if sum(pressOldIndex) > 0 || sum(pressNewIndex) > 0
     %standard unit is kPa   
     conversionArray = pressConversion;
     oldIndex = pressOldIndex;
-    newIndex = strcmp(press,newUnits);
+    %newIndex = strcmp(press,newUnits);
+    newIndex = pressNewIndex;
     conversionOffset = zeros(size(press));
     
-elseif sum(volOldIndex) > 0
+elseif sum(volOldIndex) > 0 || sum(volNewIndex) > 0
     %standard unit is m3/kg
     conversionArray = volConversion;
     oldIndex = volOldIndex;
-    newIndex = strcmp(vol,newUnits);
+    %newIndex = strcmp(vol,newUnits);
+    newIndex = volNewIndex;
     conversionOffset = zeros(size(vol));
 
-elseif sum(tempOldIndex) > 0
+elseif sum(tempOldIndex) > 0 || sum(tempNewIndex) > 0
     %standard unit is C
     conversionArray = tempConversionScale;
     oldIndex = tempOldIndex;
-    newIndex = strcmp(temp,newUnits);
+    %newIndex = strcmp(temp,newUnits);
+    newIndex = tempNewIndex;
     conversionOffset = tempConversionOffset;
 
-elseif sum(energyOldIndex) > 0
+elseif sum(energyOldIndex) > 0 || sum(energyNewIndex) > 0
     %standard unit is kJ
     conversionArray = energyConversion;
     oldIndex = energyOldIndex;
-    newIndex = strcmp(energy,newUnits);
+    %newIndex = strcmp(energy,newUnits);
+    newIndex = energyNewIndex;
     conversionOffset = zeros(size(energy));
     
-elseif sum(specEnergyOldIndex) > 0
+elseif sum(specEnergyOldIndex) > 0 || sum(specEnergyNewIndex) > 0
     %standard unit is kJ/kg
     conversionArray = specEnergyConversion;
     oldIndex = specEnergyOldIndex;
-    newIndex = strcmp(specEnergy,newUnits);
+    %newIndex = strcmp(specEnergy,newUnits);
+    newIndex = specEnergyNewIndex;
     conversionOffset = zeros(size(specEnergy));
     
-elseif sum(specEntropyOldIndex) > 0
+elseif sum(specEntropyOldIndex) > 0 || sum(specEntropyNewIndex) > 0
     %standard unit is kJ/kgK
     conversionArray = specEntropyConversion;
     oldIndex = specEntropyOldIndex;
-    newIndex = strcmp(specEntropy,newUnits);
+    %newIndex = strcmp(specEntropy,newUnits);
+    newIndex = specEntropyNewIndex;
     conversionOffset = zeros(size(specEntropy));    
+    
+elseif strcmp(oldUnits,'default')
+%     oldIndex = 1;
+%     
+%     newIndex = [pressNewIndex, volNewIndex, tempNewIndex, energyNewIndex, specEnergyNewIndex, specEntropyNewIndex]
+%     
+%     newIndex = strcmp(specEntropy,newUnits);
+% 
+%     
+    fprintf("Default specified, error in assigning unit type");
+    
+    
     
 else
     %this means that none of the units matched
@@ -109,6 +133,16 @@ end
 %debugging
 % strcmp(newUnits,'default');
 % newIndex == 0;
+
+
+if strcmp(oldUnits,'default')
+    oldIndex = 1;
+    %again hard coding default units in first index
+end
+
+
+
+
 
 if all(newIndex == 0) && strcmp(newUnits,'default')
     %so nothing matched, other than default
@@ -124,8 +158,8 @@ end
 
 %final value conversion, first to an intermediary unit, then to the desired
 %output unit
-valIntermediary = (oldVal + conversionOffset(oldIndex)) .* conversionArray(oldIndex)
-newVal = (valIntermediary ./ conversionArray(newIndex)) - conversionOffset(newIndex)
+valIntermediary = (oldVal + conversionOffset(oldIndex)) .* conversionArray(oldIndex);
+newVal = (valIntermediary ./ conversionArray(newIndex)) - conversionOffset(newIndex);
 %dot syntax allows this to work for arrays of values
     
 
