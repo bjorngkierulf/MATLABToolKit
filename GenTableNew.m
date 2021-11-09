@@ -16,14 +16,20 @@ Critical.s = 4.4298;
 
 % Water Saturation Temperature Data
 TDataSatNew= readmatrix('ThermoProp.xlsx','Sheet','A2');
-TDataSatNew(:,[1 2]) = TDataSatNew(:,[2 1]); 
+TDataSatNew(:,[1 2]) = TDataSatNew(:,[2 1]);
 
 % Water Saturation Pressure Data
 PDataSatNew= readmatrix('ThermoProp.xlsx','Sheet','A3');
 
 
 SatData = sortrows([PDataSatNew;TDataSatNew],1);
-SatData(end,:) = [];
+
+%this removes the the four rows of headers that were read in as NaN and
+%cause interpolation issues. Another solution would be to add a range to
+%the readmatrix
+SatData(end-4:end,:) = [];
+%This also removes the double T = 220.9 points, which were also causing
+%issues with interp1
 
 % Table - Saturated State
 Table.Sat.P = SatData(:,1);

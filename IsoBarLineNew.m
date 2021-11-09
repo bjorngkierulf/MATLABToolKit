@@ -2,15 +2,15 @@ function Out = IsoBarLineNew(P,Table)
 
         N = 5;
        % Exctracting Saturation Data
-       Temp = Table.Sat.T;
-       Press = Table.Sat.P;
+       Temp = Table.Sat.T
+       Press = Table.Sat.P
        Vf = Table.Sat.vf;
        Vg = Table.Sat.vg;
        
        SatState.P = P;
-       SatState.T = interp1(Press,Temp,P,'linear','extrap'); 
-       SatState.vf = interp1(Press,Vf,P,'linear','extrap'); 
-       SatState.vg = interp1(Press,Vg,P,'linear','extrap');
+       SatState.T = interp1(Press,Temp,P,'linear','extrap')
+       SatState.vf = interp1(Press,Vf,P,'linear','extrap')
+       SatState.vg = interp1(Press,Vg,P,'linear','extrap')
        
 %% SubCooled Section 
 

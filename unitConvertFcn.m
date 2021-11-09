@@ -3,11 +3,11 @@ function newVal = unitConvertFcn(oldVal,oldUnits,newUnits)
 
 %supported units are
 %pressure: ['kPa','bar','Pa,'MPa','psi','psf']
-%temperature: ['C','K','R','F']
-%specific volume: ['m3_kg','L_kg']
+%temperature: ['^oC','K','^oR','^oF']
+%specific volume: ['m^3/kg','L/kg']
 %energy: [J,kJ]
-%specific energy: ['kJ_kg','J_kg','Btu_lb']
-%specific entropy: ['kJ_kgK','J_kgK','Btu_lbR']
+%specific energy: ['kJ/kg','J/kg','Btu/lb']
+%specific entropy: ['kJ/kgK','J/kgK','Btu/lbR']
 
 %Define conversion factors and names for each type of unit
 
@@ -20,14 +20,14 @@ pressOldIndex = strcmp(press,oldUnits);
 pressNewIndex = strcmp(press,newUnits);
 
 %Specific volume
-vol = {'m3_kg','L_kg'};
+vol = {'m^3/kg','L/kg'};
 volConversion = [1, 0.001];
 volOldIndex = strcmp(vol,oldUnits);
 volNewIndex = strcmp(vol,newUnits);
 
 
 %Temperature
-temp = {'C','K','R','F'};
+temp = {'^oC','K','^oR','^oF'};
 tempConversionScale = [1, 1, 5/9, 5/9];
 tempConversionOffset = [0, -273.15, -491.67, -32];
 tempOldIndex = strcmp(temp,oldUnits);
@@ -40,14 +40,14 @@ energyOldIndex = strcmp(energy,oldUnits);
 energyNewIndex = strcmp(energy,newUnits);
 
 %Specific energy
-specEnergy = {'kJ_kg','J_kg','Btu_lb'};
+specEnergy = {'kJ/kg','J/kg','Btu/lb'};
 kJ_kgToBtu_lb =  2.3260; %1/0.429923;
 specEnergyConversion = [1, 0.001, kJ_kgToBtu_lb];
 specEnergyOldIndex = strcmp(specEnergy,oldUnits);
 specEnergyNewIndex = strcmp(specEnergy,newUnits);
 
 %specific entropy: 
-specEntropy = {'kJ_kgK','J_kgK','Btu_lbR'};
+specEntropy = {'kJ/kgK','J/kgK','Btu/lbR'};
 kJ_kgKToBtu_lbR =  4.1868; %kJ_kgToBtu_lb * 5/9; %=0.2388459
 specEntropyConversion = [1, 0.001, kJ_kgKToBtu_lbR];
 specEntropyOldIndex = strcmp(specEntropy,oldUnits);

@@ -48,7 +48,10 @@ end
      
      case 'T'
      
-       SatState.T = Value1;
+       SatState.T = Value1
+       Temp
+       Press
+       
        SatState.P = interp1(Temp,Press,Value1,'linear','extrap'); 
        SatState.vf = interp1(Temp,Vf,Value1,'linear','extrap'); 
        SatState.vg = interp1(Temp,Vg,Value1,'linear','extrap');
