@@ -7,12 +7,15 @@ function Out = IsoThermLine(T,Table)
        Press = Table.Sat.P;
        Vf = Table.Sat.vf;
        Vg = Table.Sat.vg;
-       
+       Sf = Table.Sat.sf;
+       Sg = Table.Sat.sg;
+
        SatState.T = T;
        SatState.P = interp1(Temp,Press,T,'linear','extrap'); 
        SatState.vf = interp1(Temp,Vf,T,'linear','extrap'); 
        SatState.vg = interp1(Temp,Vg,T,'linear','extrap');
-
+       SatState.sf = interp1(Temp,Sf,T,'linear','extrap');
+       SatState.sg = interp1(Temp,Sg,T,'linear','extrap');
 
 
     PVec = unique(Table.SubCooled.P);
@@ -38,6 +41,7 @@ function Out = IsoThermLine(T,Table)
         vVector = [linspace(vmin,SatState.vf,N),linspace(SatState.vf,SatState.vg,N) ...
             ,linspace(SatState.vg,vMax,N)];
         PVector = zeros(size(vVector));
+        sVector = zeros(size(vVector));
         
         for i = 1:numel(vVector)
             
@@ -47,12 +51,15 @@ function Out = IsoThermLine(T,Table)
                 
                 case 'Saturated'             
                     PVector(i) = Data.P;
+                    sVector(i) = Data.s;
                 case 'SuperHeat'
                    SuperState = SuperHeatR('T',T,'v',vVector(i),Table);
                    PVector(i) = SuperState.P;
+                   sVector(i) = SuperState.s;
                 case 'SubCooled'
                     SubState = SubcooledR('T',T,'v',vVector(i),Table);
                     PVector(i) = SubState.P;
+                    sVector(i) = SubState.s;
             end
             
       
@@ -78,10 +85,10 @@ function Out = IsoThermLine(T,Table)
 %         xlabel('V')
 %         ylabel('P')
      
-
        Out.P = PVector;
        Out.T = T*ones(size(PVector));
        Out.v = vVector;
+       Out.s = sVector;
 
 
 end

@@ -12,7 +12,8 @@ function Out = ProcIsentropicLine(s,T1,T2,Table)
 %        Sf = Table.Sat.sf;
 %        Sg = Table.Sat.sg;
 
-       N = 10;
+       %N = 10;
+       N = 40;
        
        TVector = linspace(T1,T2,N);
        PVector = zeros(size(TVector));

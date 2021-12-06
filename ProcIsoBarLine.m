@@ -1,6 +1,8 @@
 function Out = ProcIsoBarLine(P,v1,v2,Table)
 
-        N = 5;
+       %N = 5;
+       N = 40;
+
        % Exctracting Saturation Data
        Temp = Table.Sat.T;
        Press = Table.Sat.P;

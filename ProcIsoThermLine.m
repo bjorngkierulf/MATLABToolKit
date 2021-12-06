@@ -1,5 +1,12 @@
 function Out = ProcIsoThermLine(T,v1,v2,Table)
 
+        %all of these need to be redone
+        %just have them call the iso line function, then cut out all data
+        %greater or less than v1, v2. Then add back in the first and last
+        %points
+        %oh shit these also need to be reimplemented to work with specific
+        %entropy as well as volume, yeahhhh
+        %no nevermind maybe it's ok
 
         if v1>v2
             vmid = v1;
@@ -19,7 +26,8 @@ function Out = ProcIsoThermLine(T,v1,v2,Table)
 %        SatState.vg = interp1(Temp,Vg,T,'linear','extrap');
 
 
-        N = 10;
+        %N = 10;
+        N = 150;
         vVector = linspace(v1,v2,N);
         PVector = zeros(size(vVector));
         SVector = zeros(size(vVector));

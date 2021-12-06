@@ -120,8 +120,14 @@ elseif strcmp(oldUnits,'default')
 %     newIndex = strcmp(specEntropy,newUnits);
 % 
 %     
+    %conversionArray = specEntropyConversion;
+    conversionArray = 1;
+    conversionOffset = 0;
+    %this should only be for default to default, so just return the
+    %unchanged input
+
     fprintf("Default specified, error in assigning unit type");
-    
+    newIndex = 1;
     
     
 else
