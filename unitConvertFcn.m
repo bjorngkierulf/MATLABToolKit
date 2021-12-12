@@ -25,9 +25,8 @@ volConversion = [1, 0.001];
 volOldIndex = strcmp(vol,oldUnits);
 volNewIndex = strcmp(vol,newUnits);
 
-
 %Temperature
-temp = {'^oC','K','^oR','^oF'};
+temp = {[char(0176),'C'],'K',[char(0176),'R'],[char(0176),'F']};
 tempConversionScale = [1, 1, 5/9, 5/9];
 tempConversionOffset = [0, -273.15, -491.67, -32];
 tempOldIndex = strcmp(temp,oldUnits);
@@ -47,7 +46,7 @@ specEnergyOldIndex = strcmp(specEnergy,oldUnits);
 specEnergyNewIndex = strcmp(specEnergy,newUnits);
 
 %specific entropy: 
-specEntropy = {'kJ/kgK','J/kgK','Btu/lbR'};
+specEntropy = {'kJ/kgK','J/kgK',['Btu/lb',char(0176),'R']};
 kJ_kgKToBtu_lbR =  4.1868; %kJ_kgToBtu_lb * 5/9; %=0.2388459
 specEntropyConversion = [1, 0.001, kJ_kgKToBtu_lbR];
 specEntropyOldIndex = strcmp(specEntropy,oldUnits);
@@ -131,8 +130,11 @@ elseif strcmp(oldUnits,'default')
     
     
 else
+    conversionArray = 1;
+    conversionOffset = 0;
     %this means that none of the units matched
     fprintf(strcat("First (old) units are unrecognized: ", oldUnits))
+    newIndex = 0;
     
 end
 
@@ -152,13 +154,19 @@ end
 
 if all(newIndex == 0) && strcmp(newUnits,'default')
     %so nothing matched, other than default
+    %newVal = oldVal;
     newIndex = 1;
+    oldIndex = 1;
+    %return
     %this hard codes the first index in the unit list as the default
     
 elseif all(newIndex == 0)
     %this means that they entered the first unit correctly, but the second
     %one didn't match
+    oldIndex = 1; %just return the entered value
     fprintf(strcat("Second (new) Units are unrecognized or do not match: ", newUnits))
+    %newVal = oldVal;
+    %return
 end
 
 
