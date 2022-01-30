@@ -1,5 +1,9 @@
 function SatState = XSaturated(x,Prop,Value,Table)
 
+% this function does not need any bounds checking, because the given value
+% of quality is already checked and guaranteed to be between 0 and 1. And
+% all the second property needs to be is within the absolute bounds of the
+% saturation table, which has already been checked via absBoundsCheck
 
 % Inputs Description:
 

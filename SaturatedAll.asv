@@ -1,0 +1,153 @@
+%function SatState = SaturatedAll(Prop1,Value1,Prop2,Value2,Table,saturateDetectPTTolerance)
+
+clc; clear; close all;
+%
+% Prop1 = 'P';
+% Value1 = 1;
+%Prop1 = 'P';
+%Value1 = 5;
+
+%Prop2 = 's';
+%Value2 = 1;
+%
+% Prop1 = 'h';
+% Value1 = 855;
+
+Prop1 = 's';
+Value1 = 2.0144;
+
+Prop2 = 'v';
+Value2 = .2;
+
+
+[Prop1,Value1,Prop2,Value2] = InputSort(Prop1,Value1,Prop2,Value2);
+
+
+[Table,critical] = GenTableNew();
+
+saturateDetectPTTolerance = 0.01;
+
+
+% Extracting Saturation Data
+Temp = Table.Sat.T;
+Press = Table.Sat.P;
+Vf = Table.Sat.vf;
+Vg = Table.Sat.vg;
+Vfg = Table.Sat.vfg;
+Uf = Table.Sat.uf;
+Ug = Table.Sat.ug;
+Ufg = Table.Sat.ufg;
+Hf = Table.Sat.hf;
+Hg = Table.Sat.hg;
+Hfg = Table.Sat.hfg;
+Sf = Table.Sat.sf;
+Sg = Table.Sat.sg;
+Sfg = Table.Sat.sfg;
+
+%okay so we know that it is saturated. So the input properties are between
+%two things somehow
+
+%we will need special treatment for P, T. Let's assume that we have other
+%things. But P / T are easy
+
+%pseudocode:
+
+%find what quality the mixture would be based on the first property
+%x(i) = Value1 - something f / something g - something f
+
+%find what the second value would be based on the quality
+%v2(i) = something2 f + x(i) * (something2 g - something2 f)
+
+
+
+
+
+
+%special P T handling
+
+%inputSort gives P before T
+if strcmp(Prop1,'P') && strcmp(Prop2,'T') %really this first thing just shouldn't be the case
+    
+    %find the temperature that it would be if it were saturated
+    Tsat = interp1(Press,Temp,Value1,'linear','extrap');
+
+    %examine the difference between that and the actual input temp
+    if abs(Tsat - Value2) < saturateDetectPTTolerance
+        %fuck, quality is still indeterminate
+        x = 0; %default to sat liquid?
+    else
+        fprintf("P, T values supposed to be saturated but aren't")
+        x = 0; %default to sat liquid?
+    end
+
+elseif strcmp(Prop1,'P') || (strcmp(Prop1,'T') || strcmp(Prop2,'T'))
+    %pressure can only be Prop1, temperature could be either
+    
+    switch Prop1
+        case 'P'
+            value1InterpArray = Press;
+        case 'T'
+            value1InterpArray = Temp;
+    end
+    
+    switch Prop2
+        case 'v'
+            satGArray = Vg;
+            satFArray = Vf;
+        case 'u'
+            satGArray = Vg;
+            satFArray = Vf;
+        case 'h'
+            satGArray = Vg;
+            satFArray = Vf;
+        case 's'
+            satGArray = Vg;
+            satFArray = Vf;
+        %case 'x'
+        %shouldn't be the case
+
+    end
+    
+    satF = interp1(value1InterpArray,satFArray,Value1,'linear','extrap');
+    satG = interp1(value1InterpArray,satGArray,Value1,'linear','extrap');
+
+    x = (Value2 - satF) / (satG - satF);
+
+else %neither prop1 nor prop2 is pressure or temperature. UVHS TIME!
+
+%pseudocode:
+
+%find what quality the mixture would be based on the first property
+%x(i) = Value1 - something f / something g - something f
+switch Prop1
+        case 'v'
+            satGArray = Vg;
+            satFArray = Vf;
+        case 'u'
+            satGArray = Vg;
+            satFArray = Vf;
+        case 'h'
+            satGArray = Vg;
+            satFArray = Vf;
+        case 's'
+            satGArray = Vg;
+            satFArray = Vf;
+
+end
+
+
+
+
+%find what the second value would be based on the quality
+%v2(i) = something2 f + x(i) * (something2 g - something2 f)
+
+
+
+
+end
+
+
+
+
+
+%end %end func

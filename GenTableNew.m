@@ -96,4 +96,180 @@ Table.SatSV.hg = TDataSat(:,10);
 Table.SatSV.si = TDataSat(:,11);
 Table.SatSV.sg = TDataSat(:,13);
 
+
+
+
+
+
+debug = true;
+graph = false;
+
+names = ["vg","ug","hg","sg"];
+vars = [Table.Sat.vg,Table.Sat.ug,Table.Sat.hg,Table.Sat.sg];
+allDupes = struct();
+
+if debug
+    close all %this now, not in the loop
+    for v = 1:numel(names) %numel(vars) gives too many things
+        var = vars(:,v);
+
+        %this gives the unique entries. This leaves one of the two of every
+        %duplicate pair
+        %[~,uniqueUg] = unique(Table.Sat.ug)
+        [uniqueInds,uniqueUg] = unique(var);
+
+        %initialize as the whole thing, then remove the duplicates
+        %duplicateUg = Table.Sat.ug;
+        duplicateUg = var;
+        duplicateUg(uniqueUg) = [];
+
+
+        %uniqueUg
+        %only for removing them later
+        duplicateInds = 1:numel(var);
+        duplicateInds(uniqueUg) = [];
+
+        dupes = [];
+        for i = 1:numel(duplicateUg)
+            %preallocating here would potentially cause a problem if there were
+            %three of a value
+            %dupes = [dupes; find(Table.Sat.ug == duplicateUg(i))] %column vector
+            dupes = [dupes; find(var == duplicateUg(i))]; %column vector
+
+
+        end %end inner for, to find the actaul duplicates
+
+
+        if graph
+        %plot the output WRT pressure and temperature
+        figure(v)
+        title(names(v))
+        subplot(2,1,1)
+        plot(Table.Sat.P,var)
+        hold on
+        plot(Table.Sat.P(dupes),var(dupes))
+        legend("All","Duplicates")
+        xlabel("P")
+        ylabel(names(v))
+
+        subplot(2,1,2)
+        plot(Table.Sat.T,var)
+        hold on
+        plot(Table.Sat.T(dupes),var(dupes))
+        legend("All","Duplicates")
+        xlabel("T")
+        ylabel(names(v))
+
+        %shared?
+        %title(names(v))
+        end
+
+        %pack outputs for ordering graphing
+        allDupes.(names(v)) = dupes;
+        allDupeButOnlyOne.(names(v)) = duplicateInds;
+
+
+    end %end outer for, to loop through the variables
+
+    %order = {'P','T','v','u','h','s','x'};
+    %nested for, lets get the combinations
+    for i = 1:numel(names)
+        xVar = vars(:,i);
+        xDupes = allDupes.(names(i));
+        for j = 1:numel(names)
+            yVar = vars(:,j);
+            yDupes = allDupes.(names(j));
+
+            localDupes = unique([xDupes;yDupes]); %not the most elegant but it works
+
+            if graph
+            figure(numel(names)+i)
+            subplot(2,2,j)
+            plot(xVar,yVar)
+            hold on
+            plot(xVar(localDupes),yVar(localDupes))
+            legend("All","Duplicates")
+            xlabel(names(i))
+            ylabel(names(j))
+            end
+
+        end
+
+    end %end debug if
+
 end
+
+
+%Now, we correct the duplicate entries. We don't have to worry about things
+%being nonmonotonic and causing extreme discontinuities during
+%interpolation, because that is being handled in the interpolation
+%ordering... We don't simply want to remove the rows, because only u? or h
+%values are duplicate, the others values are fine
+
+for i = 1:numel(names)
+    
+    unmodified = Table.Sat.(names(i));
+
+    %allDupes.(names(i))
+    %allDupeButOnlyOne.(names(i))
+
+    unmodified(allDupeButOnlyOne.(names(i))) = unmodified(allDupeButOnlyOne.(names(i))) + 0.001;
+    
+    Table.Sat.(names(i)) = unmodified; %now a misnomer
+
+end
+
+
+end
+
+
+
+
+%% This is in Ug, there are duplicate entries
+
+% 
+% uniqueInd =
+% 
+%     26    54    92   100
+% 
+% u(uniqueInd)
+% 
+% ans =
+% 
+%     2.4152
+%     2.4945
+%     2.6024
+%     2.5805
+% 
+% 
+% 
+% find(u==2.4152)
+% 
+% ans =
+% 
+%     25
+%     26
+% 
+%     find(u==2.4945)
+% 
+% ans =
+% 
+%     53
+%     54
+% 
+%     find(u==2.6024)
+% 
+% ans =
+% 
+%     86
+%     92
+% 
+% find(u==2.5805)
+% 
+% ans =
+% 
+%     78
+%    100
+
+%okay so that was a pain but these are the indices where Ug is duplicate
+%25, 26. 53, 54. 86, 92. 78, 100.

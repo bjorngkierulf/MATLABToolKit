@@ -1,5 +1,6 @@
 function Out = IsoThermLine(T,Table)
-
+        %Just for now
+        %[Table,Critical] = GenTableNew;
 
 
        % Exctracting Saturation Data
@@ -57,7 +58,10 @@ function Out = IsoThermLine(T,Table)
                    PVector(i) = SuperState.P;
                    sVector(i) = SuperState.s;
                 case 'SubCooled'
-                    SubState = SubcooledR('T',T,'v',vVector(i),Table);
+                    %T
+                    %vVector(i)
+                    %SubState = SubcooledR('T',T,'v',vVector(i),Table);
+                    SubState = SubCooledAll('T',T,'v',vVector(i),Table);
                     PVector(i) = SubState.P;
                     sVector(i) = SubState.s;
             end

@@ -1,8 +1,17 @@
 function Out = StateDetect(Prop1,Value1,Prop2,Value2,Table)
 
+%this function computes the state as saturated, subcooled or superheated given prop 1,
+%prop 2 as anything. This state detection works for any properties. But
+%this function only assigns a value to out.h, out.s, etc. if the state is
+%saturated liquid-vapour mixture. If the state is subcooled or superheated,
+%then the properties u, h, s, etc must be computed in a later step by
+%StateDetectUVHS()
+
 
 % Inputs Description:
 
+%if pressure or temperature is given as property 2, switch so that it is
+%property 1
 
 if strcmp(Prop2,'T') || strcmp(Prop2,'P') 
     

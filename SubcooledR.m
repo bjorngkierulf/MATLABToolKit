@@ -31,7 +31,7 @@ SatState.vg = interp1(Temp,Vg,T,'linear','extrap');
         end
     end
     
-    PVec = PVec(PVec~=0)
+    PVec = PVec(PVec~=0);
     
     
     NewTable.P = PVec;
