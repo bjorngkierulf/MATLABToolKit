@@ -101,7 +101,7 @@ Table.SatSV.sg = TDataSat(:,13);
 
 
 
-debug = true;
+debug = true; %needs to be true or its bad news
 graph = false;
 
 names = ["vg","ug","hg","sg"];

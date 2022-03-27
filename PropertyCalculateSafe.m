@@ -1,4 +1,4 @@
-function Out = PropertyCalculateSafe(Prop1,Value1,Prop2,Value2,Table,critical)
+function [PropertyData,Out] = PropertyCalculateSafe(Prop1,Value1,Prop2,Value2,Table,critical)
 % This function is partially copied from the main code, but uses new
 % bounded functions, orders the input properties, and is robust to
 % subcooled data being unavailable
@@ -12,6 +12,11 @@ function Out = PropertyCalculateSafe(Prop1,Value1,Prop2,Value2,Table,critical)
 %determine the properties later on
 SampleData = StateDetectSafe(Prop1,Value1,Prop2,Value2,Table,critical);
 State = SampleData.State;
+
+useIncompressible = true;
+
+stateLabels = {'Subcooled liquid', 'L-V mix', 'Superheated vapor', 'Incompressible liquid'};
+
 
 switch State
     case 'Saturated'
@@ -39,8 +44,8 @@ switch State
         PropertyData = {'Saturated',SatState.P,SatState.T,SatState.v,SatState.u,SatState.h,SatState.s,SatState.x};
 
     case 'SuperHeat'
-        SuperState = SuperHeatAll(Prop1,Value1,Prop2,Value2,Table);
-        PropertyData = {'SuperHeat',SuperState.P,SuperState.T,SuperState.v,SuperState.u,SuperState.h,SuperState.s,'N/A'};
+        SuperState = SuperHeatAll(Prop1,Value1,Prop2,Value2,Table,0);
+        PropertyData = {stateLabels{3},SuperState.P,SuperState.T,SuperState.v,SuperState.u,SuperState.h,SuperState.s,'N/A'};
 
     case 'SubCooled'
         %Needs to be robust for the R134a case where there is no subcooled
@@ -49,13 +54,23 @@ switch State
         if isempty(Table.SubCooled)
             %this means that the variable Table.SubCooled always must be
             %assigned, even if empty, at table generation
-            fprintf("Subcooled data DOES NOT exist")
+            fprintf("Subcooled data is not available")
+
+            if useIncompressible
+                %fprintf("Using incompressible assumption")
+                IcoState = Incompressible(Prop1,Value1,Prop2,Value2,Table);
+                PropertyData = {stateLabels{4},IcoState.P,IcoState.T,IcoState.v,IcoState.u,IcoState.h,IcoState.s,'N/A'};
+
+            else
+
             PropertyData = {'Subcooled Data Unavailable' 0 0 0 0 0 0 0}; %dumb but it works
+
+            end
 
         else
             fprintf("Subcooled data exists")
             SubState = SubCooledAll(Prop1,Value1,Prop2,Value2,Table);
-            PropertyData = {'SubCooled',SubState.P,SubState.T,SubState.v,SubState.u,SubState.h,SubState.s,'N/A'};
+            PropertyData = {stateLabels{1},SubState.P,SubState.T,SubState.v,SubState.u,SubState.h,SubState.s,'N/A'};
 
         end
 
@@ -69,7 +84,7 @@ if strcmp(State,'Saturated')
     elseif SatState.x ==0
         PropertyData{1} = 'Saturated Liquid';
     else
-        PropertyData{1} = 'Mixture';
+        PropertyData{1} = stateLabels{2};
     end
 
 end

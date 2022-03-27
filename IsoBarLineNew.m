@@ -19,8 +19,10 @@ function Out = IsoBarLineNew(P,Table)
 
        
 %% SubCooled Section 
-
-
+if isempty(Table.SubCooled)
+        fprintf("Incompressible liquid - isobar will not be generated in subcooled region")
+        vSubVec = [];
+else
         % Pressure Values
         PValuesSub = unique(Table.SubCooled.P); 
 
@@ -50,6 +52,8 @@ function Out = IsoBarLineNew(P,Table)
         
         % Subcooled Span
         vSubVec = linspace(vmin,SatState.vf,N*3);
+
+end %robust to R134a
         vSatVec = linspace(SatState.vf,SatState.vg,N);
         
         
@@ -71,6 +75,9 @@ function Out = IsoBarLineNew(P,Table)
         else
             P1 = PValuesSuP(Ind-1); P2 = PValuesSuP(Ind); 
         end
+
+%         a = Table.SuperHeat.P
+%         b = P1
 
         IndP1 = Table.SuperHeat.P == P1;
         vMax1 = max(Table.SuperHeat.v(IndP1));

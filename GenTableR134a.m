@@ -14,6 +14,9 @@ Critical.v = 0.0027;  % (m^3/Kg)
 Critical.u = 248.49;    % KJ/Kg
 Critical.h = 259.13;    % 
 Critical.s = 0.8117;
+Critical.s = 0.8; %this is below the lowest value of saturated vapour and 
+% above the highest value of saturated liquid. This is required by the iso
+% lines algorithm
 
 
 %% Saturation Data

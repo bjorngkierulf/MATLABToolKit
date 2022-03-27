@@ -149,14 +149,14 @@ if strcmp(oldUnits,'default')
 end
 
 
-
+%newIndex
 
 
 if all(newIndex == 0) && strcmp(newUnits,'default')
     %so nothing matched, other than default
     %newVal = oldVal;
     newIndex = 1;
-    oldIndex = 1;
+    %oldIndex = 1; %was a typo
     %return
     %this hard codes the first index in the unit list as the default
     
