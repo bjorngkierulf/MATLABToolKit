@@ -135,6 +135,8 @@ else
     %this means that none of the units matched
     fprintf(strcat("First (old) units are unrecognized: ", oldUnits))
     newIndex = 0;
+    oldIndex = 1;
+    %hoping and praying I didn't just add back in an error I had fixed
     
 end
 
