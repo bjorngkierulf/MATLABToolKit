@@ -1,0 +1,87 @@
+<deployment-project plugin="plugin.apptool" plugin-version="1.0">
+  <configuration build-checksum="2509140143" file="/Users/bjorn/Documents/MATLAB/Git/MATLABToolKit/ThermoToolkit.prj" location="/Users/bjorn/Documents/MATLAB/Git/MATLABToolKit" name="ThermoToolkit" target="target.mlapps" target-name="Package App">
+    <param.appname>ThermoToolkit</param.appname>
+    <param.authnamewatermark>Bjorn Kierulf, Mir Masoud Ale Ali</param.authnamewatermark>
+    <param.email>kierulf.b@northeastern.edu,aleali.m@northeastern.edu</param.email>
+    <param.company>Northeastern University</param.company>
+    <param.icon />
+    <param.icons />
+    <param.summary>Provides a user interface for fluid properties interpolation using steam tables</param.summary>
+    <param.description />
+    <param.screenshot>/private/var/folders/7f/1ywbrjm500q_3lxb1kxhqb980000gn/T/tpa7635f07_c6d1_486f_a753_3fa582ef2a0a.png</param.screenshot>
+    <param.version>0.1.1</param.version>
+    <param.products.name />
+    <param.products.id />
+    <param.products.version />
+    <param.platforms />
+    <param.output>${PROJECT_ROOT}/Compiled</param.output>
+    <param.guid>b0bf88d5-7cf3-429e-a588-78b3071bd588</param.guid>
+    <unset>
+      <param.icon />
+      <param.icons />
+      <param.description />
+      <param.products.name />
+      <param.products.id />
+      <param.products.version />
+      <param.platforms />
+    </unset>
+    <fileset.main>
+      <file>${PROJECT_ROOT}/realApp.mlapp</file>
+    </fileset.main>
+    <fileset.depfun>
+      <file>${PROJECT_ROOT}/ConstVolLine.m</file>
+      <file>${PROJECT_ROOT}/GenTableNew.m</file>
+      <file>${PROJECT_ROOT}/GenTableR134a.m</file>
+      <file>${PROJECT_ROOT}/Incompressible.m</file>
+      <file>${PROJECT_ROOT}/InputSort.m</file>
+      <file>${PROJECT_ROOT}/IsentropicLine.m</file>
+      <file>${PROJECT_ROOT}/IsoBarLineNew.m</file>
+      <file>${PROJECT_ROOT}/IsoThermLine.m</file>
+      <file>${PROJECT_ROOT}/PVTData.m</file>
+      <file>${PROJECT_ROOT}/PVTData.mat</file>
+      <file>${PROJECT_ROOT}/ProcIsoLine.m</file>
+      <file>${PROJECT_ROOT}/ProcessDetect.m</file>
+      <file>${PROJECT_ROOT}/PropertyCalculate.m</file>
+      <file>${PROJECT_ROOT}/PropertyCalculateSafe.m</file>
+      <file>${PROJECT_ROOT}/SaturatedAll.m</file>
+      <file>${PROJECT_ROOT}/StateDetect.m</file>
+      <file>${PROJECT_ROOT}/StateDetectSafe.m</file>
+      <file>${PROJECT_ROOT}/SubCooled.m</file>
+      <file>${PROJECT_ROOT}/SubCooledAll.m</file>
+      <file>${PROJECT_ROOT}/SuperHeat.m</file>
+      <file>${PROJECT_ROOT}/SuperHeatAll.m</file>
+      <file>${PROJECT_ROOT}/SuperHeatR.m</file>
+      <file>${PROJECT_ROOT}/XSaturated.m</file>
+      <file>${PROJECT_ROOT}/absBoundsCheck.m</file>
+      <file>${PROJECT_ROOT}/breakCaseSuperHeat.m</file>
+      <file>${PROJECT_ROOT}/unitConvertFcn.m</file>
+    </fileset.depfun>
+    <fileset.resources>
+      <file>${PROJECT_ROOT}/ThermoProp.xlsx</file>
+    </fileset.resources>
+    <fileset.package />
+    <build-deliverables>
+      <file location="${PROJECT_ROOT}" name="Compiled" optional="false">/Users/bjorn/Documents/MATLAB/Git/MATLABToolKit/Compiled</file>
+    </build-deliverables>
+    <workflow />
+    <matlab>
+      <root>/Applications/MATLAB_R2021b.app</root>
+      <toolboxes />
+    </matlab>
+    <platform>
+      <unix>true</unix>
+      <mac>true</mac>
+      <windows>false</windows>
+      <win2k>false</win2k>
+      <winxp>false</winxp>
+      <vista>false</vista>
+      <linux>false</linux>
+      <solaris>false</solaris>
+      <osver>12.0.1</osver>
+      <os32>false</os32>
+      <os64>true</os64>
+      <arch>maci64</arch>
+      <matlab>true</matlab>
+    </platform>
+  </configuration>
+</deployment-project>

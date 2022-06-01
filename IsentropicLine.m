@@ -1,7 +1,5 @@
 function Out = IsentropicLine(s,Table,Critical)
 
-
-
        % Exctracting Saturation Data
        Temp = Table.Sat.T;
 %        Press = Table.Sat.P;
@@ -16,7 +14,7 @@ function Out = IsentropicLine(s,Table,Critical)
        end
        
        TMax = 600; Tmin = 1;
-       N = 10;
+       N = 100;
        
        TVector = unique([linspace(Tmin,TMid,N),linspace(TMid,TMax,N)]);
        PVector = zeros(size(TVector));
@@ -36,7 +34,7 @@ function Out = IsentropicLine(s,Table,Critical)
                    PVector(i) = SuperState.P;
                    vVector(i) = SuperState.v;
                 case 'SubCooled'
-                    SubState = SubcooledR('T',TVector(i),'s',s,Table);
+                    SubState = SubCooledAll('T',TVector(i),'s',s,Table,0);
                     PVector(i) = SubState.P;
                     vVector(i) = SubState.v;
             end

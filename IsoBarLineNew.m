@@ -1,6 +1,6 @@
 function Out = IsoBarLineNew(P,Table)
 
-        N = 5;
+        N = 15;
        % Exctracting Saturation Data
        Temp = Table.Sat.T;
        Press = Table.Sat.P;
@@ -50,6 +50,8 @@ else
         
         end
         
+        %override because this is dumb
+        vmin = 1.1*10^-3;
         % Subcooled Span
         vSubVec = linspace(vmin,SatState.vf,N*3);
 

@@ -106,6 +106,7 @@ graph = false;
 
 names = ["vg","ug","hg","sg"];
 vars = [Table.Sat.vg,Table.Sat.ug,Table.Sat.hg,Table.Sat.sg];
+
 allDupes = struct();
 
 if debug

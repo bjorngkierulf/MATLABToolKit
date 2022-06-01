@@ -69,7 +69,7 @@ switch State
 
         else
             fprintf("Subcooled data exists")
-            SubState = SubCooledAll(Prop1,Value1,Prop2,Value2,Table);
+            SubState = SubCooledAll(Prop1,Value1,Prop2,Value2,Table,0);
             PropertyData = {stateLabels{1},SubState.P,SubState.T,SubState.v,SubState.u,SubState.h,SubState.s,'N/A'};
 
         end

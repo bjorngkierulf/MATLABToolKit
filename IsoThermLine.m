@@ -79,7 +79,7 @@ for i = 1:numel(vVector)
             %T
             %vVector(i)
             %SubState = SubcooledR('T',T,'v',vVector(i),Table);
-            SubState = SubCooledAll('T',T,'v',vVector(i),Table);
+            SubState = SubCooledAll('T',T,'v',vVector(i),Table,0);
             PVector(i) = SubState.P;
             sVector(i) = SubState.s;
     end
