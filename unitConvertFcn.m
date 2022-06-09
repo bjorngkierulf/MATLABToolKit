@@ -110,7 +110,7 @@ if sum(pressOldIndex) > 0 || sum(pressNewIndex) > 0
     conversionArray = pressConversion;
     conversionOffset = zeros(size(press));
 
-elseif sum(volOldIndex) > 0
+elseif sum(volOldIndex) > 0 || sum(volNewIndex) > 0
     %standard unit is m3/kg
     if sum(volOldIndex) > 0 && sum(volNewIndex) > 0
         oldIndex = find(volOldIndex);
@@ -316,8 +316,11 @@ end
 %change from logical to number indexing, but be careful that we don't end
 %up with [] for nonmatching
 
+debug = false;
+if debug
 oldIndex = oldIndex
 newIndex = newIndex
+end
 
 if oldIndex ~= 0 && newIndex ~= 0 %both have matched, this is easy
     %convert units using standard method
@@ -362,6 +365,8 @@ else %break case. Neither input units (old or new) matched with any of the known
     % return original
     newVal = oldVal;
     fprintf("Neither input unit matched, and both units are not default")
+    oldUnits
+    newUnits
     return;
 
 end

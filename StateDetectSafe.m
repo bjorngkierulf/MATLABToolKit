@@ -7,8 +7,12 @@ function Out = StateDetectSafe(Prop1,Value1,Prop2,Value2,Table,critical)
 %But multiple rows if something else is given, because it is necessary to
 %look at both if it were saturated liquid and saturated vapour
 
+debug = true;
 
-
+if debug
+    fprintf("\nDebug Info for superheated")
+    fprintf("\nProp1= " + Prop1 + ", Value1= %f, Prop2= " + Prop2 + ", Value2= %f",Value1,Value2);
+end
 
 
 %lets try to generalize this a bit further
@@ -19,8 +23,6 @@ function Out = StateDetectSafe(Prop1,Value1,Prop2,Value2,Table,critical)
 %generalize first, then assess how difficult it would be to implement. If
 %it would be a lot more code / complexity, just switch to using
 %propertycalculatesafe everywhere
-
-
 
 
 % clc; clear; close all;
@@ -49,10 +51,20 @@ function Out = StateDetectSafe(Prop1,Value1,Prop2,Value2,Table,critical)
 % [Table,critical] = GenTableNew();
 %
 
-if absBoundsCheck(Prop1,Value1,Prop2,Value2,Table,critical)
+[outOfBounds,supercritical] = absBoundsCheck(Prop1,Value1,Prop2,Value2,Table,critical);
+if outOfBounds
+    fprintf("Invalid Input, out of data bounds")
+    pause %yes it should pause, this is significant
+end
+if supercritical
+    fprintf("Fluid supercritical, using data from superheated vapor tables")
+    Out.State = 'SuperHeat';
+    return
+end
+
     %print statement is in the function, for abs bounds and supercritical
     %fprintf("Invalid Input")
-end
+%end
 
 
 %now incorrect
@@ -78,7 +90,6 @@ Hg = Table.Sat.hg;
 Sf = Table.Sat.sf;
 Sg = Table.Sat.sg;
 %Sfg = Table.Sat.sfg;
-
 
 % First Independent Property
 switch Prop1
@@ -121,10 +132,16 @@ end
 %value1 is of the same unit / property as value1interparray. for instance
 %the array will be 2bar, 4bar, 6bar, and the value will be 3.5bar
 
-%Value1InterpArray
-%Press
+if debug
+Value1InterpArray
+Press
+Value1
+end
 
 if strcmp(Prop1,'P') || strcmp(Prop1,'T')
+    if debug
+        fprintf("\nOne of the properties is P or T")
+    end
 
     % Saturation Data
     SatState.P = interp1(Value1InterpArray,Press,Value1,'linear','extrap');
@@ -140,6 +157,10 @@ if strcmp(Prop1,'P') || strcmp(Prop1,'T')
     SatState.sg = interp1(Value1InterpArray,Sg,Value1,'linear','extrap');
 
 else %neither property is P, T - UVHS section
+    if debug
+        fprintf("\nNeither property is pressure or temperature, doing sketchy things")
+    end
+
     absLowerLimit = 0;
     absUpperLimit = 10^7; %idk large number, bad practice probably
 
@@ -225,6 +246,12 @@ switch Prop2
             fprintf("Invalid input, quality should be between 0 and 1")
         end
 
+end
+
+if debug
+    Value2UpperLimit
+    Value2LowerLimit
+    Value2
 end
 
 %then identifying the state is easy

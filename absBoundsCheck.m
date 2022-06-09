@@ -1,6 +1,9 @@
-function bool = absBoundsCheck(Prop1,Value1,Prop2,Value2,Table,critical)
+function [outOfBounds,supercritical] = absBoundsCheck(Prop1,Value1,Prop2,Value2,Table,critical)
+% function assigns two bools, global out of bounds and if the fluid is
+% supercritical
 
-    % function assigns true to output bool if the inputs are out of bounds
+outOfBounds = false; %default
+supercritical = false; %default
 
 %clc; clear; close all;
 %
@@ -11,7 +14,7 @@ function bool = absBoundsCheck(Prop1,Value1,Prop2,Value2,Table,critical)
 
 %Prop2 = 's';
 %Value2 = 1;
-% 
+%
 % Prop1 = 'h';
 % Value1 = 855;
 
@@ -28,21 +31,21 @@ function bool = absBoundsCheck(Prop1,Value1,Prop2,Value2,Table,critical)
 %[Table,critical] = GenTableNew();
 
 
-    % function will do a simple check on each of the properties and their
-    % values
+% function will do a simple check on each of the properties and their
+% values
 
-    allProperties = {'P','T','v','u','h','s','x'};
+allProperties = {'P','T','v','u','h','s','x'};
 
-    ind1 = find(strcmp(allProperties,Prop1));
-    ind2 = find(strcmp(allProperties,Prop2));
+ind1 = find(strcmp(allProperties,Prop1));
+ind2 = find(strcmp(allProperties,Prop2));
 
 
-    %get the absolute max and min for each property
-    maxes = zeros(size(allProperties));
-    mins = zeros(size(allProperties));
-    
-    if isempty(Table.SubCooled)
-        %no subcooled data, exclude it from max / min
+%get the absolute max and min for each property
+maxes = zeros(size(allProperties));
+mins = zeros(size(allProperties));
+
+if isempty(Table.SubCooled)
+    %no subcooled data, exclude it from max / min
     %P
     maxes(1) = max([Table.Sat.P; Table.SuperHeat.P]);
 
@@ -86,8 +89,8 @@ function bool = absBoundsCheck(Prop1,Value1,Prop2,Value2,Table,critical)
     %x
     mins(7) = 0;
 
-    else
-        %subcooled data exists, work as normal
+else
+    %subcooled data exists, work as normal
 
     %P
     maxes(1) = max([Table.SubCooled.P; Table.Sat.P; Table.SuperHeat.P]);
@@ -132,45 +135,50 @@ function bool = absBoundsCheck(Prop1,Value1,Prop2,Value2,Table,critical)
     %x
     mins(7) = 0;
 
+end
+
+if Value1 < mins(ind1) || Value1 > maxes(ind1)
+    fprintf("Value out of range: %f", Value1)
+    outOfBounds = true;
+end
+
+if Value2 < mins(ind2) || Value2 > maxes(ind2)
+    fprintf("Value out of range: %f", Value2)
+    outOfBounds = true;
+end
+
+
+criticals = zeros(size(allProperties));
+criticals(1) = critical.P;
+criticals(2) = critical.T;
+criticals(3) = critical.v;
+criticals(4) = critical.u;
+criticals(5) = critical.h;
+criticals(6) = critical.s;
+criticals(7) = 0; %quality doesn't have a critical value
+
+
+% Supercritical check
+if Value1 > criticals(ind1) && (ind1 ~=7 && ind1 ~=3)
+    fprintf("Value Supercritical': %f", Value1)
+    supercritical = true;
+
+    %now check if things are on the vapour side of supercritical. If they are
+    %not, it is out of bounds
+    if Value2 < criticals(ind2)
+        outOfBounds = true; %second value too low!
+    end
+end
+
+if Value2 > criticals(ind2) && (ind2 ~=7 && ind2 ~=3)
+    fprintf("Value Supercritical': %f", Value2)
+    supercritical = true;
+
+    if Value1 < criticals(ind1)
+        outOfBounds = true; %second value too low!
     end
     
-    bool = false; %default
-
-    if Value1 < mins(ind1) || Value1 > maxes(ind1)
-        fprintf("Value out of range: %f", Value1)
-        bool = true;
-    end
-
-    if Value2 < mins(ind2) || Value2 > maxes(ind2)
-        fprintf("Value out of range: %f", Value2)
-        bool = true;
-    end
-    
-
-    criticals = zeros(size(allProperties));
-    criticals(1) = critical.P;
-    criticals(2) = critical.T;
-    criticals(3) = critical.v;
-    criticals(4) = critical.u;
-    criticals(5) = critical.h;
-    criticals(6) = critical.s;
-    criticals(7) = 0; %quality doesn't have a critical value
-
-
-    % Supercritical check
-    if Value1 > criticals(ind1) && (ind1 ~=7 && ind1 ~=3)
-        fprintf("Value Supercritical': %f", Value1)
-        bool = true;
-    end
-
-    if Value2 > criticals(ind2) && (ind2 ~=7 && ind2 ~=3)
-        fprintf("Value Supercritical': %f", Value2)
-        bool = true;
-    end
-
-
-
-
+end
 
 
 end %end func

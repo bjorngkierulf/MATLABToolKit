@@ -4,7 +4,7 @@ clc; clear; close all;
 plotLimitsWater = struct();
 plotLimitsR134a = struct();
 
-plotLimitsWater.TV = [1*10^-5, 1*10^-1, 10, 374];
+plotLimitsWater.TV = [1*10^-5, 1*10^-1, 10, 500];
 plotLimitsWater.PV = [10^-3, 5*10^-1, 0, 250];
 plotLimitsWater.TS = [0, 9, 0, 500];
 
@@ -13,8 +13,8 @@ plotLimitsR134a.PV = [6*10^-4, 1.3*10^-1, 0, 40];
 plotLimitsR134a.TS = [0, 1, -40, 100];
 
 %size and initialize arrays
-N_T = 100;
-N_v = 100;
+N_T = 50;
+N_v = 50;
 temps = linspace(plotLimitsWater.TV(3),plotLimitsWater.TV(4),N_T); %temp bounds
 vols = logspace(-3,0,N_v); %temp bounds
 

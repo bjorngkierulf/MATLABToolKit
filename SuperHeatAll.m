@@ -1,8 +1,9 @@
-function SuperState = SuperHeatAll(Prop1,Value1,Prop2,Value2,Table,nonrobust)
+function SuperState = SuperHeatAll(Prop1,Value1,Prop2,Value2,Table,debug)
 
 %MAKE IT A SCRIPT
 %clc; clear; close all;
 
+debug = true;
 
 %reorder inputs, so that pressure is never the first input
 customOrder = {'T','v','u','h','s','x','P'};
@@ -21,12 +22,13 @@ customOrder = {'T','v','u','h','s','x','P'};
 % 
 % [Table,~] = GenTableNew();
 
-%% first section
 [Prop1,Value1,Prop2,Value2] = InputSort(Prop1,Value1,Prop2,Value2,customOrder);
-%InputSort(Prop1,Value1,Prop2,Value2,order)
-%fprintf("NOW HERE")
-
 %this allows the interpolation code to be further generalized
+
+if debug
+    fprintf("\nDebug Info for superheated")
+    fprintf("\nProp1= " + Prop1 + ", Value1= %f, Prop2= " + Prop2 + ", Value2= %f",Value1,Value2);
+end
 
 %initialize
 PVec = unique(Table.SuperHeat.P);
@@ -66,25 +68,25 @@ for i = 1:numel(PVec)
     %max(a)
 
     if Value1 > max(a) || Value1 < min(a)
-        if nonrobust
-
-            %min(a)
-            %max(a)
-
-            NewTable.T(i) = interp1(a,Table.SuperHeat.T(Ind1),Value1,'linear','extrap');
-            NewTable.v(i) = interp1(a,Table.SuperHeat.v(Ind1),Value1,'linear','extrap');
-            NewTable.h(i) = interp1(a,Table.SuperHeat.h(Ind1),Value1,'linear','extrap');
-            NewTable.s(i) = interp1(a,Table.SuperHeat.s(Ind1),Value1,'linear','extrap');
-            NewTable.u(i) = interp1(a,Table.SuperHeat.u(Ind1),Value1,'linear','extrap');
-            fprintf("\nOut of bounds, data kept")
-        else
+%         if nonrobust
+% 
+%             %min(a)
+%             %max(a)
+% 
+%             NewTable.T(i) = interp1(a,Table.SuperHeat.T(Ind1),Value1,'linear','extrap');
+%             NewTable.v(i) = interp1(a,Table.SuperHeat.v(Ind1),Value1,'linear','extrap');
+%             NewTable.h(i) = interp1(a,Table.SuperHeat.h(Ind1),Value1,'linear','extrap');
+%             NewTable.s(i) = interp1(a,Table.SuperHeat.s(Ind1),Value1,'linear','extrap');
+%             NewTable.u(i) = interp1(a,Table.SuperHeat.u(Ind1),Value1,'linear','extrap');
+%             fprintf("\nOut of bounds, data kept")
+%         else
             %Value1
             %min(a)
             %max(a)
 
             fprintf("\nLocally out of bounds, data discarded")
             NewTable.P(i) = 0;
-        end
+%         end
 
     else
         NewTable.T(i) = interp1(a,Table.SuperHeat.T(Ind1),Value1,'linear','extrap');
@@ -129,8 +131,6 @@ switch Prop2
 
 end
 
-
-
 %debug - a and b should always have the same length
 %our break case occurs when the NewTable.xx each only have one element
 %a = NewTable.T
@@ -143,9 +143,9 @@ end
 
 %this works for input P, T
 %what if the inputs are P, v or T, v (both necessary for iso-lines
-a = NewTable.P
-b = NewTable.v
-c = NewTable.T
+% a = NewTable.P
+% b = NewTable.v
+% c = NewTable.T
 
 switch Prop2
     case 'T'
@@ -168,23 +168,25 @@ switch Prop2
         %breakcase = 0;%sum(limitArray > Value1) < 1
 end
 
-if Value2 < max(limitArray) && Value2 > min(limitArray) %if Value2 is on the array that we'd like to interpolate with
-    breakcaseAlt = 0
-else
-    breakcaseAlt = 1
+if debug
+    Value1InterpArray
+    Value2InterpArray
+    limitArray
 end
-
-breakcase = breakcaseAlt;
-
-%breakcase = 0; %for now, just turn it off
-
-%prop2 general code for real
 
 if Value2 > max(Value2InterpArray) || Value2 < min(Value2InterpArray)
     fprintf("Second property out of range: %f",Value2)
 end
 
+if Value2 <= max(limitArray) && Value2 >= min(limitArray) %if Value2 is on the array that we'd like to interpolate with
+    %inclusive in the case of exact match
+    breakcase = 0
+else
+    breakcase = 1
+    fprintf("Data near saturation, using alternate algorithm")
+end
 
+%prop2 general code for real
 if breakcase %does this break for u, h, v, s cases?
     SuperState = breakCaseSuperHeat(Prop1,Value1,Prop2,Value2,Table)
     return
