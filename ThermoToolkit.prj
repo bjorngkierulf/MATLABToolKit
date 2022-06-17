@@ -1,5 +1,5 @@
 <deployment-project plugin="plugin.apptool" plugin-version="1.0">
-  <configuration build-checksum="698802866" file="/Users/bjorn/Documents/MATLAB/Git/MATLABToolKit/ThermoToolkit.prj" location="/Users/bjorn/Documents/MATLAB/Git/MATLABToolKit" name="ThermoToolkit" target="target.mlapps" target-name="Package App">
+  <configuration build-checksum="2251916804" file="/Users/bjorn/Documents/MATLAB/Git/MATLABToolKit/ThermoToolkit.prj" location="/Users/bjorn/Documents/MATLAB/Git/MATLABToolKit" name="ThermoToolkit" target="target.mlapps" target-name="Package App">
     <param.appname>ThermoToolkit</param.appname>
     <param.authnamewatermark>Bjorn Kierulf, Mir Masoud Ale Ali</param.authnamewatermark>
     <param.email>kierulf.b@northeastern.edu,aleali.m@northeastern.edu</param.email>
@@ -8,8 +8,8 @@
     <param.icons />
     <param.summary>Provides a user interface for fluid properties interpolation using steam tables</param.summary>
     <param.description />
-    <param.screenshot>/private/var/folders/7f/1ywbrjm500q_3lxb1kxhqb980000gn/T/tpa4f94b20_1c68_4aa5_a6fc_cfa4b8ca9d0b.png</param.screenshot>
-    <param.version>0.1.1</param.version>
+    <param.screenshot>/private/var/folders/7f/1ywbrjm500q_3lxb1kxhqb980000gn/T/tp5f408c94_8f6f_4211_8096_36d4abe3f966.png</param.screenshot>
+    <param.version>0.1.2</param.version>
     <param.products.name />
     <param.products.id />
     <param.products.version />
