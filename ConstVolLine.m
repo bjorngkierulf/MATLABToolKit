@@ -24,12 +24,74 @@ else
           TMid =  interp1(Vg,Temp,v,'linear','extrap');
        end
        
-       TMax = 500; %C
-       TMin = 10; %C
+        %how to determine TMax, well it depends on what v is. We follow a
+        %similar procedure to what we do in the superheat algorithm
+%         %initialize
+%         PVec = unique(Table.SuperHeat.P);
+% NewTable.P = PVec;
+% NewTable.T = zeros(size(PVec));
+% NewTable.v = zeros(size(PVec));
+% NewTable.u = zeros(size(PVec));
+% NewTable.h = zeros(size(PVec));
+% NewTable.s = zeros(size(PVec));
+% 
+% 
+%         Value1InterpArray = Table.SuperHeat.v;
+% Value1 = v;
+% %     case 's'
+% %         Value1InterpArray = Table.SuperHeat.s;
+% 
+% 
+% 
+% %general code:
+% for i = 1:numel(PVec)
+%     %find applicable rows indices in the superheated tables
+%     Ind1 = find(Table.SuperHeat.P == PVec(i));
+%     a = Value1InterpArray(Ind1);
+% 
+%     %min(a)
+%     %max(a)
+% 
+%     if Value1 > max(a) || Value1 < min(a)
+%             fprintf("\nLocally out of bounds, data discarded")
+%             NewTable.P(i) = 0;
+%     else
+%         NewTable.T(i) = interp1(a,Table.SuperHeat.T(Ind1),Value1,'linear','extrap');
+%         NewTable.v(i) = interp1(a,Table.SuperHeat.v(Ind1),Value1,'linear','extrap');
+%         NewTable.h(i) = interp1(a,Table.SuperHeat.h(Ind1),Value1,'linear','extrap');
+%         NewTable.s(i) = interp1(a,Table.SuperHeat.s(Ind1),Value1,'linear','extrap');
+%         NewTable.u(i) = interp1(a,Table.SuperHeat.u(Ind1),Value1,'linear','extrap');
+%     end
+% 
+% end
+% 
+% %remove zeroes
+% NewTable.T = NewTable.T(NewTable.P~=0);
+% NewTable.v = NewTable.v(NewTable.P~=0);
+% NewTable.h = NewTable.h(NewTable.P~=0);
+% NewTable.s = NewTable.s(NewTable.P~=0);
+% NewTable.u = NewTable.u(NewTable.P~=0);
+% NewTable.P = NewTable.P(NewTable.P~=0);
+% 
+% 
+% a = NewTable.T
+% TMax = max(NewTable.T)
+%specific maximum bound based on the maximum value of T in the new table
+%(where it has been interpolated for v = v iso). If v = v iso is not in the
+%P = Pvec(i), section of the table, then no T is added as that would be out
+%of bounds
+
+[localMin,localMax] = localBoundsCheck('v',v,Table,Critical)
+
+TMax = localMax.T;
+TMin = localMin.T;
+
+       %TMax = 600; %C
+       %TMin = 10; %C
 
        %change PMax if the fluid is R134a
        
-       PMax = 50; %arbitrary, but stops it from going up to ~1500C easily
+       %PMax = 50; %arbitrary, but stops it from going up to ~1500C easily
 
        %TMax = 700; %arbitrary, but stops it from going up to ~1500C easily
        N = 50;
@@ -39,7 +101,7 @@ else
        sVector = zeros(size(TVector));
         
         for i = 1:numel(TVector)
-            
+            if 0
             Data = StateDetect('T',TVector(i),'v',v,Table);
             
             switch Data.State 
@@ -48,7 +110,7 @@ else
                     PVector(i) = Data.P;
                     sVector(i) = Data.s;
                 case 'SuperHeat'
-                   SuperState = SuperHeatAll('T',TVector(i),'v',v,Table,0);
+                   SuperState = SuperHeatAll('T',TVector(i),'v',v,Table,Critical,0);
                    PVector(i) = SuperState.P;
                    sVector(i) = SuperState.s;
                 case 'SubCooled'
@@ -63,6 +125,14 @@ else
                     PVector(i) = SubState.P;
                     sVector(i) = SubState.s;
                     end
+            end
+            else
+                [~,State] = PropertyCalculateSafe('T',TVector(i),'v',v,Table,Critical);
+                if State.P == 0
+                    TVector(i) = 0; % used break case at supercritical, remove data
+                end
+                PVector(i) = State.P;
+                sVector(i) = State.s;
             end
             
       

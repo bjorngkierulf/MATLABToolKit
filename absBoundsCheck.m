@@ -1,9 +1,12 @@
-function [outOfBounds,supercritical] = absBoundsCheck(Prop1,Value1,Prop2,Value2,Table,critical)
+function [outOfBounds,supercritical] = absBoundsCheck(Prop1,Value1,Prop2,Value2,Table,Critical)
 % function assigns two bools, global out of bounds and if the fluid is
 % supercritical
 
 outOfBounds = false; %default
-supercritical = false; %default
+supercritical = 0; %default
+
+[Prop1,Value1,Prop2,Value2] = InputSort(Prop1,Value1,Prop2,Value2);
+%inputs should already be sorted but let's do it again
 
 %clc; clear; close all;
 %
@@ -38,7 +41,6 @@ allProperties = {'P','T','v','u','h','s','x'};
 
 ind1 = find(strcmp(allProperties,Prop1));
 ind2 = find(strcmp(allProperties,Prop2));
-
 
 %get the absolute max and min for each property
 maxes = zeros(size(allProperties));
@@ -75,16 +77,16 @@ if isempty(Table.SubCooled)
     mins(2) = min([Table.Sat.T; Table.SuperHeat.T]);
 
     %v
-    mins(3) = min(Table.SuperHeat.v);
+    mins(3) = min([Table.Sat.vf;Table.SuperHeat.v]);
 
     %u
-    mins(4) = min(Table.SuperHeat.u);
+    mins(4) = min([Table.Sat.uf;Table.SuperHeat.u]);
 
     %h
-    mins(5) = min([Table.SuperHeat.h]);
+    mins(5) = min([Table.Sat.hf;Table.SuperHeat.h]);
 
     %s
-    mins(6) = min([Table.SuperHeat.s]);
+    mins(6) = min([Table.Sat.sf;Table.SuperHeat.s]);
 
     %x
     mins(7) = 0;
@@ -149,36 +151,80 @@ end
 
 
 criticals = zeros(size(allProperties));
-criticals(1) = critical.P;
-criticals(2) = critical.T;
-criticals(3) = critical.v;
-criticals(4) = critical.u;
-criticals(5) = critical.h;
-criticals(6) = critical.s;
+criticals(1) = Critical.P;
+criticals(2) = Critical.T;
+criticals(3) = Critical.v;
+criticals(4) = Critical.u;
+criticals(5) = Critical.h;
+criticals(6) = Critical.s;
 criticals(7) = 0; %quality doesn't have a critical value
 
 
-% Supercritical check
-if Value1 > criticals(ind1) && (ind1 ~=7 && ind1 ~=3)
-    fprintf("Value Supercritical': %f", Value1)
-    supercritical = true;
 
-    %now check if things are on the vapour side of supercritical. If they are
-    %not, it is out of bounds
-    if Value2 < criticals(ind2)
-        outOfBounds = true; %second value too low!
+Value1
+Value2
+criticals
+ind1
+ind2
+
+% for the purpose of this, I am defining supercritical as - either temp or
+% press is above supercritical threshold. Then, if it is on the vapor side,
+% ie data likely to be in superheated vapor tables, return supercritical =
+% 1, otherwise if data likely to be in subcooled liquid tables, return
+% supercritical = 0
+%criticals(ind2)
+if ind2 == 7 %ind2 is quality, x. it should not be supercritical
+    if Value1 > criticals(ind1)
+        fprintf("ERROR: fluid property supercritical, but quality was specified")
+        outOfBounds = 1;
+        supercritical = 0;
+    else
+        supercritical = 0;
+    end
+else %only if ind2 is not quality, do the other things
+
+    if ind1 == 3 || ind1 == 6 %ind1 is v or s
+        %only look at value 2
+        if Value2 > criticals(ind2)
+            %it is supercritical, check which side
+            if Value1 >= criticals(ind1)
+                %vapor side, data likely in vapor tables
+                supercritical = 1;
+            else
+                %liquid side, data likely in subcooled tables
+                supercritical = 2;
+            end
+        else
+            supercritical = 0;
+        end
+    elseif ind2 == 3 || ind2 == 6
+        %only look at value 1
+        if Value1 > criticals(ind1)
+            %it is supercritical, check which side
+            if Value2 >= criticals(ind2)
+                %vapor side, data likely in vapor tables
+                supercritical = 1;
+            else
+                %liquid side, data likely in subcooled tables
+                supercritical = 2;
+            end
+        end
+    else
+        %if neither is v or s
+        if Value1 > criticals(ind1) || Value2 > criticals(ind2)
+            %if either is supercritical, it is supercritical. But what side is it on?
+            if Value1 > criticals(ind1) && Value2 > criticals(ind2)
+                %both supercritical, data likely on vapor side
+                supercritical = 1;
+            else
+                %only one supercritical, the other not
+                %.. to be implemented. for now assume data on vapor side
+                supercritical = 1;
+
+            end
+
+        end
     end
 end
-
-if Value2 > criticals(ind2) && (ind2 ~=7 && ind2 ~=3)
-    fprintf("Value Supercritical': %f", Value2)
-    supercritical = true;
-
-    if Value1 < criticals(ind1)
-        outOfBounds = true; %second value too low!
-    end
-    
-end
-
 
 end %end func

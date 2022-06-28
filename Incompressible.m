@@ -12,6 +12,11 @@ Uf = Table.Sat.uf;
 Hf = Table.Sat.hf;
 Sf = Table.Sat.sf;
 
+% check if either property is specific volume
+if strcmp(Prop1,'v') || strcmp(Prop2,'v')
+    fprintf('Incompressible model poorly posed using specific volume as input')
+end
+
 % First Independent Property
 switch Prop1
 

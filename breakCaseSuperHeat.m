@@ -1,8 +1,9 @@
-function SuperState = breakCaseSuperHeat(Prop1,Value1,Prop2,Value2,Table)
+function SuperState = breakCaseSuperHeat(Prop1,Value1,Prop2,Value2,Table,Critical)
 %break case is detected when there is less than 1 (should it be 2?) values
 %in the new table that are within range of the Value2
 %really we should check that there are at least two values in newTable,
 %then check if Value2 is between them. Then call this function
+
 
 debug = true;
 
@@ -12,6 +13,11 @@ debug = true;
 
 %reorder inputs, so that pressure is never the first input
 customOrder = {'T','v','u','h','s','x','P'};
+
+Critical
+% check if supercritcal
+[betterBeZero,supercritical] = absBoundsCheck(Prop1,Value1,Prop2,Value2,Table,Critical)
+
 %
 %Prop1
 %Prop2
@@ -347,6 +353,25 @@ elseif strcmp(Prop1,'T') %P is not an input, so we have T, v and / or s.
     firstIsoBarSpecEnthalpies = Table.SuperHeat.h(Ind2)
     firstIsoBarSpecEnthalpyTInput = interp1(firstIsoBarTemps,firstIsoBarSpecEnthalpies,TInput,'linear')
 
+    
+if supercritical > 0
+    %assume saturation properties are critical properties?
+    qPSat = Critical.P;
+    qvSat = Critical.v;
+    qsSat = Critical.s;
+    quSat = Critical.u;
+    qhSat = Critical.h;
+
+    %test
+    SuperState.P = 0;
+    SuperState.T = 0;
+    SuperState.v = 0;
+    SuperState.u = 0;
+    SuperState.h = 0;
+    SuperState.s = 0;
+    return
+
+else
     %we still need the values at the saturation point, but this time the
     %saturation point is defined by temperature
     qPSat = interp1(Table.Sat.T,Table.Sat.P,TInput,'linear')
@@ -354,6 +379,7 @@ elseif strcmp(Prop1,'T') %P is not an input, so we have T, v and / or s.
     qsSat = interp1(Table.Sat.T,Table.Sat.sg,TInput,'linear')
     quSat = interp1(Table.Sat.T,Table.Sat.ug,TInput,'linear')
     qhSat = interp1(Table.Sat.T,Table.Sat.hg,TInput,'linear')
+end
 
     qP = interp1([qvSat,firstIsoBarVolTInput],[qPSat,firstIsoBarValue],vInput,'linear')
     qS = interp1([qvSat,firstIsoBarVolTInput],[qsSat,firstIsoBarSpecEntropyTInput],vInput,'linear')
@@ -402,6 +428,24 @@ elseif strcmp(Prop1,'T') %P is not an input, so we have T, v and / or s.
     firstIsoBarSpecEnthalpies = Table.SuperHeat.h(Ind2)
     firstIsoBarSpecEnthalpyTInput = interp1(firstIsoBarTemps,firstIsoBarSpecEnthalpies,TInput,'linear')
 
+if supercritical > 0
+    %assume saturation properties are critical properties?
+    qPSat = Critical.P;
+    qvSat = Critical.v;
+    qsSat = Critical.s;
+    quSat = Critical.u;
+    qhSat = Critical.h;
+
+    %test
+    SuperState.P = 0;
+    SuperState.T = 0;
+    SuperState.v = 0;
+    SuperState.u = 0;
+    SuperState.h = 0;
+    SuperState.s = 0;
+    return
+
+else
     %we still need the values at the saturation point, but this time the
     %saturation point is defined by temperature
     qPSat = interp1(Table.Sat.T,Table.Sat.P,TInput,'linear')
@@ -409,6 +453,7 @@ elseif strcmp(Prop1,'T') %P is not an input, so we have T, v and / or s.
     qsSat = interp1(Table.Sat.T,Table.Sat.sg,TInput,'linear')
     quSat = interp1(Table.Sat.T,Table.Sat.ug,TInput,'linear')
     qhSat = interp1(Table.Sat.T,Table.Sat.hg,TInput,'linear')
+end
 
     qP = interp1([qsSat,firstIsoBarSpecEntropyTInput],[qPSat,firstIsoBarValue],sInput,'linear')
     qV = interp1([qsSat,firstIsoBarSpecEntropyTInput],[qvSat,firstIsoBarVolTInput],sInput,'linear')

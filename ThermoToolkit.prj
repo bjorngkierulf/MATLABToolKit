@@ -1,5 +1,5 @@
 <deployment-project plugin="plugin.apptool" plugin-version="1.0">
-  <configuration build-checksum="2251916804" file="/Users/bjorn/Documents/MATLAB/Git/MATLABToolKit/ThermoToolkit.prj" location="/Users/bjorn/Documents/MATLAB/Git/MATLABToolKit" name="ThermoToolkit" target="target.mlapps" target-name="Package App">
+  <configuration build-checksum="515584329" file="/Users/bjorn/Documents/MATLAB/Git/MATLABToolKit/ThermoToolkit.prj" location="/Users/bjorn/Documents/MATLAB/Git/MATLABToolKit" name="ThermoToolkit" target="target.mlapps" target-name="Package App">
     <param.appname>ThermoToolkit</param.appname>
     <param.authnamewatermark>Bjorn Kierulf, Mir Masoud Ale Ali</param.authnamewatermark>
     <param.email>kierulf.b@northeastern.edu,aleali.m@northeastern.edu</param.email>
@@ -8,8 +8,8 @@
     <param.icons />
     <param.summary>Provides a user interface for fluid properties interpolation using steam tables</param.summary>
     <param.description />
-    <param.screenshot>/private/var/folders/7f/1ywbrjm500q_3lxb1kxhqb980000gn/T/tp5f408c94_8f6f_4211_8096_36d4abe3f966.png</param.screenshot>
-    <param.version>0.1.2</param.version>
+    <param.screenshot>/private/var/folders/7f/1ywbrjm500q_3lxb1kxhqb980000gn/T/tp8d015222_2772_4d86_993a_b4442d355950.png</param.screenshot>
+    <param.version>0.1.3</param.version>
     <param.products.name />
     <param.products.id />
     <param.products.version />
@@ -54,6 +54,7 @@
       <file>${PROJECT_ROOT}/XSaturated.m</file>
       <file>${PROJECT_ROOT}/absBoundsCheck.m</file>
       <file>${PROJECT_ROOT}/breakCaseSuperHeat.m</file>
+      <file>${PROJECT_ROOT}/localBoundsCheck.m</file>
       <file>${PROJECT_ROOT}/unitConvertFcn.m</file>
     </fileset.depfun>
     <fileset.resources>

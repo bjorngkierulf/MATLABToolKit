@@ -14,6 +14,18 @@ if debug
     fprintf("\nProp1= " + Prop1 + ", Value1= %f, Prop2= " + Prop2 + ", Value2= %f",Value1,Value2);
 end
 
+% [outOfBounds,supercritical] = absBoundsCheck(Prop1,Value1,Prop2,Value2,Table,critical);
+% if outOfBounds
+%     %fprintf("Invalid Input, out of data bounds")
+% end
+% if supercritical == 1 % supercritical liquid
+% 
+% elseif supercritical == 2 %supercritical vapor
+% 
+%     
+% end
+
+
 
 %lets try to generalize this a bit further
 %also, this should return all the properties P, T, s, u, h, x... but ONLY
@@ -51,16 +63,17 @@ end
 % [Table,critical] = GenTableNew();
 %
 
-[outOfBounds,supercritical] = absBoundsCheck(Prop1,Value1,Prop2,Value2,Table,critical);
-if outOfBounds
-    fprintf("Invalid Input, out of data bounds")
-    pause %yes it should pause, this is significant
-end
-if supercritical
-    fprintf("Fluid supercritical, using data from superheated vapor tables")
-    Out.State = 'SuperHeat';
-    return
-end
+%this code now in the propertycalc function
+% [outOfBounds,supercritical] = absBoundsCheck(Prop1,Value1,Prop2,Value2,Table,critical);
+% if outOfBounds
+%     fprintf("Invalid Input, out of data bounds")
+%     pause %yes it should pause, this is significant
+% end
+% if supercritical
+%     fprintf("Fluid supercritical, using data from superheated vapor tables")
+%     Out.State = 'SuperHeat';
+%     return
+% end
 
     %print statement is in the function, for abs bounds and supercritical
     %fprintf("Invalid Input")

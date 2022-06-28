@@ -1,4 +1,4 @@
-function SuperState = SuperHeatAll(Prop1,Value1,Prop2,Value2,Table,debug)
+function SuperState = SuperHeatAll(Prop1,Value1,Prop2,Value2,Table,Critical,debug)
 
 %MAKE IT A SCRIPT
 %clc; clear; close all;
@@ -188,7 +188,7 @@ end
 
 %prop2 general code for real
 if breakcase %does this break for u, h, v, s cases?
-    SuperState = breakCaseSuperHeat(Prop1,Value1,Prop2,Value2,Table)
+    SuperState = breakCaseSuperHeat(Prop1,Value1,Prop2,Value2,Table,Critical)
     return
     %     if ~nonrobust %guarantees that we don't cause recursion
 %         Prop1
