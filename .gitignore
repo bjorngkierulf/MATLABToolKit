@@ -1,1 +1,3 @@
 #here is a gitignore if we need one
+*.asv
+~$*
