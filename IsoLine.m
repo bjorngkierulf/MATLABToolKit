@@ -1,152 +1,116 @@
-function Out = IsoLine(Prop,Value,Table,Critical,~,DebugPlot)
+function Out = IsoLine(Prop,Value,Table,Critical,DebugPlot)
     % This function serves as a general iso-line creation tool, which will
     % be robust enough to handle iso T, P, v, and s lines on TV, PV, and TS
     % diagrams
 
+
+%     Prop = 's';
+%     Value = 3;
+%     [Table,Critical] = GenTableNew();
+%     DebugPlot = 1;
+
 %number of points in each region - at the top for visibility
 NSubcooled = 5;
-NSaturated = 3;
-NSuperheated = 20;
+%NSaturated = 5;
+NSuperheated = 30;
+NTemps = 300;
 
-a = Table
-%grab saturation data, why ever not?
-Temp = Table.Sat.T;
-Press = Table.Sat.P;
-Vf = Table.Sat.vf;
-Vg = Table.Sat.vg;
-Sf = Table.Sat.sf;
-Sg = Table.Sat.sg;
+% a = Table
+% %grab saturation data, why ever not?
+% Temp = Table.Sat.T;
+% Press = Table.Sat.P;
+% Vf = Table.Sat.vf;
+% Vg = Table.Sat.vg;
+% Sf = Table.Sat.sf;
+% Sg = Table.Sat.sg;
 
-%grab the minimum and maximum. In general specific volume works, we could
-%use specific entropy just as well though? It only works when either of
-%them is the iso-line
-%vMin = Bounds.PV(1);
-%vMax = Bounds.PV(1);
-
-%first one is brief, just for subcooled
-if isempty(Table.SubCooled)
-    %easy, just assume incompressible and take the minimum in saturated
-    %liquid table
-    vMin = min(Table.Sat.vf);
-
-else
-
-    switch Prop
-        case 'P' %isobar
-            validSubcooledVector = Table.SubCooled.v(Table.SubCooled.P < Value);
-            validSuperHeatVector = Table.SuperHeat.v(Table.SubCooled.P > Value);
-        case 'T' %isotherm
-            validSubcooledVector = Table.SubCooled.v(Table.SubCooled.T < Value); %?
-            validSuperHeatVector = Table.SuperHeat.v(Table.SubCooled.T > Value);
-
-        case 'v' %isovolumetric
-            %validSubcooledVector = Table.SubCooled.T(Table.SubCooled.v
-            %< Value);??
-        case 's' %isentropic
-
-    end
-
-    vMin = min(validSubcooledVector)
-    %this guarantees that the minimum specific volume value is within the
-    %bounds for the input pressure?
-end
-
-%this needs to go outside because of the if empty. We still need the max
-%value for v regardless of whether subcooled data exists
-switch Prop
-    case 'P' %isobar
-        validSuperHeatVector = Table.SuperHeat.v(Table.SuperHeat.P > Value);
-        InterpArray = Press;
-    case 'T' %isotherm
-        validSuperHeatVector = Table.SuperHeat.v(Table.SuperHeat.T > Value);
-        InterpArray = Temp;
-
-    case 'v' %isovolumetric
-        %validSubcooledVector = Table.SubCooled.T(Table.SubCooled.v
-        %< Value);??
-    case 's' %isentropic
-
-end
-
-vMax = max(validSuperHeatVector)
+[localMin,localMax] = localBoundsCheck(Prop,Value,Table,Critical);
 
 
-SatState.P = interp1(InterpArray,Press,Value,'linear','extrap');
-SatState.T = interp1(InterpArray,Temp,Value,'linear','extrap');
-SatState.vf = interp1(InterpArray,Vf,Value,'linear','extrap');
-SatState.vg = interp1(InterpArray,Vg,Value,'linear','extrap');
-SatState.sf = interp1(InterpArray,Sf,Value,'linear','extrap');
-SatState.sg = interp1(InterpArray,Sg,Value,'linear','extrap');
-
-
-
-%create base vector for interpolation
-vVector = [linspace(vMin,SatState.vf,NSubcooled),linspace(SatState.vf,SatState.vg,NSaturated),linspace(SatState.vg,vMax,NSuperheated)];
-%we're duplicating points on the saturation curve. Just use Xsaturated for
-%those
-
-%now find all the other values at those specific volumes, for the given
-%input pressure
-
-%what if the combination of input pressure and given volume is outside the
-%table range?
-%possibility eliminated by bounds finding function above
-
-%now we switch again to do the actual calculations
-%this could be an if and?
+%switch to define variable on x axis and detect if supercritical. v and s
+%cannot be supercritical
 switch Prop
     case 'P' %isobar
         xProp = 'v';
-        xValues = vVector;
 
     case 'T' %isotherm
         xProp = 'v';
-        xValues = vVector;
 
     case 'v' %isovolumetric
-        %validSubcooledVector = Table.SubCooled.T(Table.SubCooled.v
-        %< Value);??
+        xProp = 'T';
+
     case 's' %isentropic
+        xProp = 'T';
 
 end
+
+xMin = localMin.(xProp)
+xMax = localMax.(xProp)
+
+%pause
+%dumb but easier
+switch xProp
+    case 'v'
+        
+        if Value > max(Table.Sat.(Prop))
+%             supercritical = true
+            xValues = linspace(xMin,xMax,NSubcooled + NSuperheated)
+
+        elseif Value < min(Table.Sat.(Prop))
+            fprintf("Error - property out of bounds (below triple point)")
+
+        else %isobar / isotherm will be Liquid-Vapour mixture somewhere..
+            vf = interp1(Table.Sat.(Prop),Table.Sat.vf,Value,'linear','extrap')
+            vg = interp1(Table.Sat.(Prop),Table.Sat.vf,Value,'linear','extrap')
+
+            xValues = [linspace(xMin,vf,NSubcooled),linspace(vg,xMax,NSuperheated)]
+
+        end
+
+    case 'T'
+%         xMin = localMin.(xProp)
+%         xMax = localMax.(xProp)
+        xValues = linspace(xMin,xMax,NTemps)
+
+end
+
+
+%xValues
+
+% pause
+
 
 Out.v = zeros(size(xValues));
 Out.T = zeros(size(xValues));
 Out.P = zeros(size(xValues));
 Out.s = zeros(size(xValues));
 
-
-
-%all of this should be general, excepting the case of v and s as Prop?
 for i = 1:numel(xValues)
-    %switch based on state (known for elements in vVector)
-    if i < NSubcooled %if it equals NSubcooled, use saturated
-        if isempty(Table.SubCooled)
-            data = Incompressible(xProp,xValues(i),Prop,Value,Table); %is it better to simply use xSaturated?
 
-        else
-        data = SubCooledAll(xProp,xValues(i),Prop,Value,Table); %this is where generalizing starts to be big money
+    [PropertyData,State] = PropertyCalculateSafe(Prop,Value,xProp,xValues(i),Table,Critical);
     
-        end    
-    
-    elseif i <= NSubcooled + NSaturated        
-        %quick sort for Saturated all
-        [Prop1Sat, Value1Sat, Prop2Sat, Value2Sat] = InputSort(xProp,xValues(i),Prop,Value);% might be fucked, and need to be changed?
-        %calculate quality robustly
-        SatState = SaturatedAll(Prop1Sat, Value1Sat, Prop2Sat, Value2Sat, Table);
-        data = XSaturated(SatState.x,Prop,Value,Table);
-        %XSaturated does not rely on the input being pressure or temperature
+    %bundle the four outputs we'd need for plotting
+    Out.v(i) = State.v;
+    Out.s(i) = State.s;
+    Out.T(i) = State.T;
+    Out.P(i) = State.P;
 
-    else
-        data = SuperHeatAll(xProp,xValues(i),Prop,Value,Table,0);
+    shouldBeEqual = State.(Prop);
+    if abs(shouldBeEqual - Value) / Value > 0.01
+        xValues(i)
+        pause
     end
-    
-    Out.v(i) = data.v; %should also match
-    Out.T(i) = data.T;
-    Out.P(i) = data.P; %should match, otherwise bad news
-    Out.s(i) = data.s;
-
+%     State
+%     pause
 end
+
+Out.P
+
+%remove values that are zero
+Out.v(Out.P==0) = [];
+Out.s(Out.P==0) = [];
+Out.T(Out.P==0) = [];
+Out.P(Out.P==0) = [];
 
 
 if DebugPlot

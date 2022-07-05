@@ -7,18 +7,19 @@ clc; clear; close all;
 
 %Out = IsoLine('P',P,Table,Critical,0,1)
 
-v = [0.001, 0.0015, 0.002, 0.0025, 0.003, 0.0035, 0.004];%, 0.005, 0.006, 0.007, 0.01, 0.1, 0.5]; %m3/kg
+v = [40];%[0.001, 0.0015, 0.002, 0.0025, 0.003, 0.0035, 0.004];%, 0.005, 0.006, 0.007, 0.01, 0.1, 0.5]; %m3/kg
 
 for i = 1:length(v)
-    Outv(i) = ConstVolLine(v(i),Table,Critical);
+    Outv(i) = IsoLine('P',v(i),Table,Critical,0)
+    %Outv(i) = ConstVolLine(v(i),Table,Critical);
 end
 
-s = 1;%[1,2,3,3.5,4,4.4,4.5,5,6]; %kJ/kg*K
+s = [1];%[1,2,3,3.5,4,4.4,4.5,5,6]; %kJ/kg*K
+%Outs = [];
 for i = 1:length(s)
-    Outs(i) = IsentropicLine(s(i),Table,Critical);
+    %Outs(i) = IsentropicLine(s(i),Table,Critical);
+    Outs(i) = IsoLine('s',s(i),Table,Critical,0);
 end
-
-
 
 
 %% T-V plot
@@ -37,9 +38,9 @@ for i = 1:length(v)
     plot(Outv(i).v,Outv(i).T)
 end
 
-% for i = 1:length(s)
-%     plot(Outs(i).v,Outs(i).T)
-% end
+for i = 1:length(s)
+    plot(Outs(i).v,Outs(i).T)
+end
 
 %% T-S plot
 figure(2)
@@ -56,9 +57,9 @@ for i = 1:length(v)
 plot(Outv(i).s,Outv(i).T)
 end
 
-% for i = 1:length(s)
-% plot(Outs(i).s,Outs(i).T)
-% end
+for i = 1:length(s)
+plot(Outs(i).s,Outs(i).T)
+end
 
 %% P-V plot
 figure(3)
@@ -76,6 +77,6 @@ for i = 1:length(v)
     plot(Outv(i).v,Outv(i).P)
 end
 
-% for i = 1:length(s)
-%     plot(Outs(i).v,Outs(i).P)
-% end
+for i = 1:length(s)
+    plot(Outs(i).v,Outs(i).P)
+end

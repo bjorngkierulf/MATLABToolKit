@@ -8,7 +8,7 @@
     <param.icons />
     <param.summary>Provides a user interface for fluid properties interpolation using steam tables</param.summary>
     <param.description />
-    <param.screenshot>/private/var/folders/7f/1ywbrjm500q_3lxb1kxhqb980000gn/T/tp8d015222_2772_4d86_993a_b4442d355950.png</param.screenshot>
+    <param.screenshot />
     <param.version>0.1.3</param.version>
     <param.products.name />
     <param.products.id />
@@ -20,6 +20,7 @@
       <param.icon />
       <param.icons />
       <param.description />
+      <param.screenshot />
       <param.products.name />
       <param.products.id />
       <param.products.version />

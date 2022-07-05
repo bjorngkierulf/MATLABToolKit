@@ -1,4 +1,4 @@
-function Out = IsoThermLine(T,Table)
+function Out = IsoThermLine(T,Table,Critical)
 %Just for now
 %[Table,Critical] = GenTableNew;
 
@@ -71,7 +71,7 @@ for i = 1:numel(vVector)
             sVector(i) = Data.s;
         case 'SuperHeat'
             %SuperState = SuperHeatR('T',T,'v',vVector(i),Table);
-            SuperState = SuperHeatAll('T',T,'v',vVector(i),Table,0);
+            SuperState = SuperHeatAll('T',T,'v',vVector(i),Table,Critical,0);
 
             PVector(i) = SuperState.P;
             sVector(i) = SuperState.s;

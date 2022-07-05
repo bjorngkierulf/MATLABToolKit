@@ -147,62 +147,52 @@ end
 % b = NewTable.v
 % c = NewTable.T
 
-switch Prop2
-    case 'T'
-        limitArray = NewTable.T
-        %breakcase = sum(limitArray > Value2) < 1
-    case 'P'
-        limitArray = NewTable.P
-        %breakcase = sum(limitArray > Value2) < 1
-    case 'v'
-        limitArray = NewTable.v
-        %breakcase = sum(limitArray > Value2) < 1
-    case 's'
-        limitArray = NewTable.s;
-        %breakcase = 0;%sum(limitArray > Value1) < 1
-    case 'u'
-        limitArray = NewTable.u;
-        %breakcase = 0;%sum(limitArray > Value1) < 1
-    case 'h'
-        limitArray = NewTable.h;
-        %breakcase = 0;%sum(limitArray > Value1) < 1
-end
+% switch Prop2
+%     case 'T'
+%         limitArray = NewTable.T
+%         %breakcase = sum(limitArray > Value2) < 1
+%     case 'P'
+%         limitArray = NewTable.P
+%         %breakcase = sum(limitArray > Value2) < 1
+%     case 'v'
+%         limitArray = NewTable.v
+%         %breakcase = sum(limitArray > Value2) < 1
+%     case 's'
+%         limitArray = NewTable.s;
+%         %breakcase = 0;%sum(limitArray > Value1) < 1
+%     case 'u'
+%         limitArray = NewTable.u;
+%         %breakcase = 0;%sum(limitArray > Value1) < 1
+%     case 'h'
+%         limitArray = NewTable.h;
+%         %breakcase = 0;%sum(limitArray > Value1) < 1
+% end
 
 if debug
     Value1InterpArray
     Value2InterpArray
-    limitArray
+    %limitArray
 end
+limitArray = Value2InterpArray;
 
-if Value2 > max(Value2InterpArray) || Value2 < min(Value2InterpArray)
-    fprintf("Second property out of range: %f",Value2)
+if isempty(Value2InterpArray)
+    fprintf("First or second property out of data range - array is empty")
+    SuperState.T = 0;
+    SuperState.P = 0;
+    SuperState.v = 0;
+    SuperState.u = 0;
+    SuperState.h = 0;
+    SuperState.s = 0;
+return
+
 end
+% if Value2 > max(Value2InterpArray) || Value2 < min(Value2InterpArray)
+%     fprintf("Second property out of range: %f",Value2)
+% end
 
-if Value2 <= max(limitArray) && Value2 >= min(limitArray) %if Value2 is on the array that we'd like to interpolate with
+if Value2 <= max(limitArray) && Value2 >= min(limitArray) && numel(Value2InterpArray) > 1 %if Value2 is on the array that we'd like to interpolate with
     %inclusive in the case of exact match
-    breakcase = 0
-else
-    breakcase = 1
-    fprintf("Data near saturation, using alternate algorithm")
-end
-
-%prop2 general code for real
-if breakcase %does this break for u, h, v, s cases?
-    SuperState = breakCaseSuperHeat(Prop1,Value1,Prop2,Value2,Table,Critical)
-    return
-    %     if ~nonrobust %guarantees that we don't cause recursion
-%         Prop1
-%         Value1
-%         Prop2
-%         Value2
-%         NewTable
-%         fprintf("break case")
-% 
-%         SuperState = SuperHeatAll(Prop1,Value1,Prop2,Value2,Table,1);%nonrobust
-%     end
-else
-
-SuperState.T = interp1(Value2InterpArray,NewTable.T,Value2,'linear','extrap');
+    SuperState.T = interp1(Value2InterpArray,NewTable.T,Value2,'linear','extrap');
 SuperState.P = interp1(Value2InterpArray,NewTable.P,Value2,'linear','extrap');
 SuperState.v = interp1(Value2InterpArray,NewTable.v,Value2,'linear','extrap');
 SuperState.u = interp1(Value2InterpArray,NewTable.u,Value2,'linear','extrap');
@@ -214,7 +204,12 @@ SuperState.s = interp1(Value2InterpArray,NewTable.s,Value2,'linear','extrap');
 %pressure is value2, both Value2InterpArray and NewTable.P are equal. Thus
 %by asking for interpolation at value2 you get value2 back
 
-end
+else
+    breakcase = 1
+    fprintf("Data near saturation, using alternate algorithm")
+    SuperState = breakCaseSuperHeat(Prop1,Value1,Prop2,Value2,Table,Critical)
+    return
 
+end
 
 end

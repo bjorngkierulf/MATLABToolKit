@@ -175,6 +175,18 @@ if strcmp(Prop2,'P') %works
             firstIsoBarInd = firstIsoBarInd - 1
             %firstIsoBarInd = firstIsoBarInd + 1;
 
+            if firstIsoBarInd == 0
+                fprintf("Data out of bounds")
+                    %test
+    SuperState.P = 0;
+    SuperState.T = 0;
+    SuperState.v = 0;
+    SuperState.u = 0;
+    SuperState.h = 0;
+    SuperState.s = 0;
+                return
+            end
+
             firstIsoBarValue = PVec(firstIsoBarInd) %resets this
             %secondIsoBarInd = firstIsoBarInd - 1; %always true?
 
@@ -192,6 +204,18 @@ if strcmp(Prop2,'P') %works
             %unused? no it is
             firstIsoBarInd = firstIsoBarInd - 1
             %firstIsoBarInd = firstIsoBarInd + 1;
+
+                        if firstIsoBarInd == 0
+                fprintf("Data out of bounds")
+                    %test
+    SuperState.P = 0;
+    SuperState.T = 0;
+    SuperState.v = 0;
+    SuperState.u = 0;
+    SuperState.h = 0;
+    SuperState.s = 0;
+                return
+                        end
 
             firstIsoBarValue = PVec(firstIsoBarInd) %resets this
             %secondIsoBarInd = firstIsoBarInd - 1; %always true?
@@ -361,6 +385,7 @@ if supercritical > 0
     qsSat = Critical.s;
     quSat = Critical.u;
     qhSat = Critical.h;
+    fprintf("Data out of bounds")
 
     %test
     SuperState.P = 0;
@@ -435,6 +460,7 @@ if supercritical > 0
     qsSat = Critical.s;
     quSat = Critical.u;
     qhSat = Critical.h;
+    fprintf("Data out of bounds")
 
     %test
     SuperState.P = 0;

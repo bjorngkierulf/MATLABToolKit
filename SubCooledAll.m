@@ -161,11 +161,16 @@ if isempty(limitArray) || Value2 > max(limitArray) || Value2 < min(limitArray)
     %liquid data. Pressure, if given, is going to be the second input, so just pass the first input here 
     %out = XSaturated(quality,otherProp,notQuality,Table)
     SubState = XSaturated(0,Prop1,Value1,Table);
-    if strcmp(Prop2,'P')
-        SubState.P = Value2;
-    else
-        fprintf("Interpolation poorly posed to calculate pressure, using saturation pressure at input conditions")
-    end
+    
+    % set the two properties to their input values. This eliminates some
+    % issues
+    SubState.(Prop1) = Value1;
+    SubState.(Prop2) = Value2;
+%     if strcmp(Prop2,'P')
+%         SubState.P = Value2;
+%     else
+%         fprintf("Interpolation poorly posed to calculate pressure, using saturation pressure at input conditions")
+%     end
     return
 end
 

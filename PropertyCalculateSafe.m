@@ -1,4 +1,4 @@
-function [PropertyData,Out] = PropertyCalculateSafe(Prop1,Value1,Prop2,Value2,Table,Critical)
+function [PropertyData,Out] = PropertyCalculateSafe(Prop1,Value1,Prop2,Value2,Table,Critical)%,forceIncompressible)
 % This function is partially copied from the main code, but uses new
 % bounded functions, orders the input properties, and is robust to
 % subcooled data being unavailable
@@ -47,6 +47,7 @@ useIncompressible = true;
 
 stateLabels = {'Subcooled liquid', 'L-V mix', 'Superheated vapor', 'Incompressible liquid'};
 
+fprintf(State)
 switch State
     case 'Saturated'
 
@@ -80,7 +81,7 @@ switch State
         %Needs to be robust for the R134a case where there is no subcooled
         %liquid data
 
-        if isempty(Table.SubCooled)
+        if isempty(Table.SubCooled)% || forceIncompressible
             %this means that the variable Table.SubCooled always must be
             %assigned, even if empty, at table generation
             fprintf("Subcooled data is not available")
