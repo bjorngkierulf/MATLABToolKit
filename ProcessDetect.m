@@ -15,7 +15,7 @@ isProcess = zeros(numel(Processes),1);
 %convenience
 %e.g. the second process, 'isothermal', maps to the fourth variable in the
 %input data cell aray
-ProcessToVariableIndex = [3, 4, 5, 8];
+ProcessToVariableIndex = [4, 5, 6, 9];
 
 
 %if else, check each independently
