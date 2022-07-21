@@ -132,7 +132,8 @@ end
 %before we compare to limitArray - the bigger break case for subcooled is
 %if there simply isn't any data in range at all. Because the table starts
 %so high of pressure
-if isempty(limitArray) || Value2 > max(limitArray) || Value2 < min(limitArray)
+if isempty(limitArray) || Value2 > max(limitArray) || Value2 < min(limitArray) || (size(unique(limitArray),1) > 1)
+    %not all the same to machine precision
     %inclusive in the case of exact match
 
     if debug

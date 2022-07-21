@@ -99,8 +99,12 @@ for i = 1:numel(xValues)
     if abs(shouldBeEqual - Value) / Value > 0.01
         if debug
             fprintf('\nxValue=%f',xValues(i));
-            pause
+            %pause
         end
+        %since the thing that should be equal, isn't, we should discard
+        %that value
+        Out.P(i) = 0;
+
     end
 
     if debug

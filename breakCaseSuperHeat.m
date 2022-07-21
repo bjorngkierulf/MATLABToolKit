@@ -19,7 +19,7 @@ customOrder = {'T','v','u','h','s','x','P'};
 % end
 
 % check if supercritcal
-[betterBeZero,supercritical] = absBoundsCheck(Prop1,Value1,Prop2,Value2,Table,Critical);
+[betterBeZero,supercritical] = absBoundsCheck(Prop1,Value1,Prop2,Value2,Table,Critical,debug);
 
 if debug
     supercritical
@@ -27,15 +27,15 @@ end
 
 if betterBeZero %if its out of bounds
     if debug
-    fprintf("\nOUT OF GLOBAL BOUNDS, SOMETHING WENT WRONG")
+        fprintf("\nOUT OF GLOBAL BOUNDS, SOMETHING WENT WRONG")
     end
 
-            SuperState.P = 0;
-            SuperState.T = 0;
-            SuperState.v = 0;
-            SuperState.u = 0;
-            SuperState.h = 0;
-            SuperState.s = 0;
+    SuperState.P = 0;
+    SuperState.T = 0;
+    SuperState.v = 0;
+    SuperState.u = 0;
+    SuperState.h = 0;
+    SuperState.s = 0;
     return
 end
 
@@ -128,27 +128,27 @@ NewTable.u = NewTable.u(NewTable.P~=0);
 NewTable.P = NewTable.P(NewTable.P~=0);
 
 % switch Prop2
-% 
+%
 %     case 'T'
 %         Value2InterpArray = NewTable.T;
-% 
+%
 %     case 'v'
 %         Value2InterpArray = NewTable.v;
-% 
+%
 %     case 'u'
 %         Value2InterpArray = NewTable.u;
-% 
+%
 %     case 'h'
 %         Value2InterpArray = NewTable.h;
-% 
+%
 %     case 's'
 %         Value2InterpArray = NewTable.s;
-% 
+%
 %     case 'P'
 %         Value2InterpArray = NewTable.P;
 %     otherwise
 %         fprintf("Unrecognized property")
-% 
+%
 % end
 
 if debug
@@ -367,10 +367,11 @@ elseif strcmp(Prop1,'T') %P is not an input, so we have T, v and / or s.
     % Prop1 is T, Prop2 is v
     %%
     if strcmp(Prop2,'v')
+        TInput = Value1;
+        vInput = Value2;
         if debug
             fprintf("\nUsing T and v for break case calculation")
-            TInput = Value1;
-            vInput = Value2;
+
             fprintf('\nTInput=%f, vInput=%f',TInput,vInput)
 
         end
@@ -408,11 +409,11 @@ elseif strcmp(Prop1,'T') %P is not an input, so we have T, v and / or s.
 
         if supercritical > 0
             %assume saturation properties are critical properties?
-%             qPSat = Critical.P;
-%             qvSat = Critical.v;
-%             qsSat = Critical.s;
-%             quSat = Critical.u;
-%             qhSat = Critical.h;
+            %             qPSat = Critical.P;
+            %             qvSat = Critical.v;
+            %             qsSat = Critical.s;
+            %             quSat = Critical.u;
+            %             qhSat = Critical.h;
             if debug
                 fprintf("\nData out of bounds")
             end

@@ -43,8 +43,8 @@ if Value1 > min(satValues) && ~(Value1 > Critical.(Prop1) && couldBeSupercrit)
     %value is within mixture range, add mins and maxes
 
     if strcmp(Prop1,'P') || strcmp(Prop1,'T')
-        [~,satF] = PropertyCalculateSafe(Prop1,Value1,'x',0,Table,Critical);
-        [~,satG] = PropertyCalculateSafe(Prop1,Value1,'x',1,Table,Critical);
+        [~,satF] = PropertyCalculateSafe(Prop1,Value1,'x',0,Table,Critical,debug);
+        [~,satG] = PropertyCalculateSafe(Prop1,Value1,'x',1,Table,Critical,debug);
 
         % satF = XSaturated(0,Prop1,Value1,Table);%,Critical);
         % satG = XSaturated(1,Prop1,Value1,Table);%,Critical);
@@ -60,12 +60,14 @@ if Value1 > min(satValues) && ~(Value1 > Critical.(Prop1) && couldBeSupercrit)
         %remove zeros that can come from property calculate via out of bounds
 
         for i = 1:length(fn)
+            a = NewTable.(fn{i});
             if debug
-                a = NewTable.(fn{i})
+                a
             end
             NewTable.(fn{i}) = a(a~=0);
+            a = NewTable.(fn{i});
             if debug
-                a = NewTable.(fn{i})
+                a
             end
             maxes.(fn{i}) = [maxes.(fn{i}), max(NewTable.(fn{i}))];
             mins.(fn{i}) = [mins.(fn{i}), min(NewTable.(fn{i}))];
@@ -264,7 +266,7 @@ if strcmp(Prop1,'P') %typical method doesn't work for pressure
         indRangeUpper = find(Table.SuperHeat.P==PVec(upperInd));
 
         if debug
-            fprintf("\nlowerInd=%f, upperInd=%f, indRangeLower=%f, indRangeUpper=%f",lowerInd,uppwerInd,indRangeLower,indRangeUpper)
+            fprintf("\nlowerInd=%f, upperInd=%f, indRangeLower=%f, indRangeUpper=%f",lowerInd,upperInd,indRangeLower,indRangeUpper)
         end
 
         %         a = Table.SuperHeat.T(indRangeLower)
