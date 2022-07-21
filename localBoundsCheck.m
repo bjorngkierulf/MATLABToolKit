@@ -1,4 +1,4 @@
-function [localMin,localMax] = localBoundsCheck(Prop1,Value1,Table,Critical)
+function [localMin,localMax] = localBoundsCheck(Prop1,Value1,Table,Critical,debug)
 % determines the maximum and minimum of each value, given an input
 % value. Like what is the max v, s in the table for T = 150 C
 
@@ -60,15 +60,19 @@ if Value1 > min(satValues) && ~(Value1 > Critical.(Prop1) && couldBeSupercrit)
         %remove zeros that can come from property calculate via out of bounds
 
         for i = 1:length(fn)
-            a = NewTable.(fn{i})
+            if debug
+                a = NewTable.(fn{i})
+            end
             NewTable.(fn{i}) = a(a~=0);
-            a = NewTable.(fn{i})
+            if debug
+                a = NewTable.(fn{i})
+            end
             maxes.(fn{i}) = [maxes.(fn{i}), max(NewTable.(fn{i}))];
             mins.(fn{i}) = [mins.(fn{i}), min(NewTable.(fn{i}))];
         end
 
     elseif strcmp(Prop1,'v') || strcmp(Prop1,'s') || strcmp(Prop1,'u') || strcmp(Prop1,'h')
-        
+
         switch Prop1 %only pull the values for which the input variable is between saturated liquid and vapor values
             case 'v'
                 validInds = find(Value1 >= Table.Sat.vf & Value1 <= Table.Sat.vg);
@@ -76,7 +80,7 @@ if Value1 > min(satValues) && ~(Value1 > Critical.(Prop1) && couldBeSupercrit)
                 validInds = find(Value1 >= Table.Sat.sf & Value1 <= Table.Sat.sg); %apparently single & can do vector equals, double && is for a single value. TIL
             case 'u'
                 validInds = find(Value1 >= Table.Sat.uf & Value1 <= Table.Sat.ug);
-                case 'h'
+            case 'h'
                 validInds = find(Value1 >= Table.Sat.hf & Value1 <= Table.Sat.hg);
         end
         NewTable.P = Table.Sat.P(validInds);
@@ -91,7 +95,7 @@ if Value1 > min(satValues) && ~(Value1 > Critical.(Prop1) && couldBeSupercrit)
             mins.(fn{i}) = [mins.(fn{i}), min(NewTable.(fn{i}))];
         end
     else
-        fprintf("Invalid property: " + Prop1)
+        fprintf("\nInvalid property: " + Prop1)
     end
 
 else
@@ -99,10 +103,13 @@ else
 
 end
 
-fprintf("Saturated:")
-mins
-maxes
+if debug
+    fprintf("\nSaturated:")
+    mins
+    maxes
+end
 clear('NewTable')
+
 %pause
 
 
@@ -153,14 +160,14 @@ if ~isempty(Table.SubCooled) && ~strcmp(Prop1,'P')
             NewTable.s = [];
         end
 
-            for i = 1:length(fn)
-        maxes.(fn{i}) = [maxes.(fn{i}), max(NewTable.(fn{i}))];
-        mins.(fn{i}) = [mins.(fn{i}), min(NewTable.(fn{i}))];
-    end
+        for i = 1:length(fn)
+            maxes.(fn{i}) = [maxes.(fn{i}), max(NewTable.(fn{i}))];
+            mins.(fn{i}) = [mins.(fn{i}), min(NewTable.(fn{i}))];
+        end
 
-    %elseif strcmp(Prop1,'s')
-            %add nothing to mins and maxes. it will end at saturation line
-        
+        %elseif strcmp(Prop1,'s')
+        %add nothing to mins and maxes. it will end at saturation line
+
     else
 
         %initialize
@@ -173,7 +180,6 @@ if ~isempty(Table.SubCooled) && ~strcmp(Prop1,'P')
         NewTable.s = zeros(size(PVec));
 
         switch Prop1
-
             case 'T'
                 Value1InterpArray = Table.SubCooled.T;
 
@@ -188,7 +194,6 @@ if ~isempty(Table.SubCooled) && ~strcmp(Prop1,'P')
 
             case 's'
                 Value1InterpArray = Table.SubCooled.s;
-
         end
 
         %general code:
@@ -201,7 +206,9 @@ if ~isempty(Table.SubCooled) && ~strcmp(Prop1,'P')
             %max(a)
 
             if Value1 > max(a) || Value1 < min(a)
-                fprintf("\nLocally out of bounds, data discarded")
+                if debug
+                    fprintf("\nLocally out of bounds, data discarded")
+                end
                 NewTable.P(i) = 0;
             else
                 NewTable.T(i) = interp1(a,Table.SubCooled.T(Ind1),Value1,'linear','extrap');
@@ -219,11 +226,11 @@ if ~isempty(Table.SubCooled) && ~strcmp(Prop1,'P')
         NewTable.s = NewTable.s(NewTable.P~=0);
         NewTable.u = NewTable.u(NewTable.P~=0);
         NewTable.P = NewTable.P(NewTable.P~=0);
-            
+
         for i = 1:length(fn)
-        maxes.(fn{i}) = [maxes.(fn{i}), max(NewTable.(fn{i}))];
-        mins.(fn{i}) = [mins.(fn{i}), min(NewTable.(fn{i}))];
-    end
+            maxes.(fn{i}) = [maxes.(fn{i}), max(NewTable.(fn{i}))];
+            mins.(fn{i}) = [mins.(fn{i}), min(NewTable.(fn{i}))];
+        end
     end
 
 
@@ -231,11 +238,13 @@ if ~isempty(Table.SubCooled) && ~strcmp(Prop1,'P')
 
 end
 
-fprintf("subcooled:")
-mins
-maxes
+if debug
+    fprintf("\nSubcooled:")
+    mins
+    maxes
 
-clear('NewTable')
+    clear('NewTable')
+end
 
 
 %% then look at superheated
@@ -249,11 +258,14 @@ if strcmp(Prop1,'P') %typical method doesn't work for pressure
 
         %value is within range
         %find the index on either side of the input pressure
-        lowerInd = find(PVec < Value1,1,'last')
-        upperInd = find(PVec > Value1,1,'first')
-        indRangeLower = find(Table.SuperHeat.P==PVec(lowerInd))
-        indRangeUpper = find(Table.SuperHeat.P==PVec(upperInd))
+        lowerInd = find(PVec < Value1,1,'last');
+        upperInd = find(PVec > Value1,1,'first');
+        indRangeLower = find(Table.SuperHeat.P==PVec(lowerInd));
+        indRangeUpper = find(Table.SuperHeat.P==PVec(upperInd));
 
+        if debug
+            fprintf("\nlowerInd=%f, upperInd=%f, indRangeLower=%f, indRangeUpper=%f",lowerInd,uppwerInd,indRangeLower,indRangeUpper)
+        end
 
         %         a = Table.SuperHeat.T(indRangeLower)
         %         %interpolate values between those two
@@ -267,11 +279,19 @@ if strcmp(Prop1,'P') %typical method doesn't work for pressure
 
         %upper range is higher pressure -> lower volume, entropy, u, h
         %lower range is lower pressure -> lower temperature
-        NewTable.T = Table.SuperHeat.T(indRangeLower)
-        NewTable.v = Table.SuperHeat.v(indRangeUpper)
-        NewTable.u = Table.SuperHeat.u(indRangeUpper)
-        NewTable.h = Table.SuperHeat.h(indRangeUpper)
-        NewTable.s = Table.SuperHeat.s(indRangeUpper)
+        NewTable.T = Table.SuperHeat.T(indRangeLower);
+        NewTable.v = Table.SuperHeat.v(indRangeUpper);
+        NewTable.u = Table.SuperHeat.u(indRangeUpper);
+        NewTable.h = Table.SuperHeat.h(indRangeUpper);
+        NewTable.s = Table.SuperHeat.s(indRangeUpper);
+
+        if debug
+            b = NewTable.T
+            b = NewTable.v
+            b = NewTable.u
+            b = NewTable.h
+            b = NewTable.s
+        end
 
 
     else
@@ -298,7 +318,6 @@ else
     NewTable.s = zeros(size(PVec));
 
     switch Prop1
-
         case 'T'
             Value1InterpArray = Table.SuperHeat.T;
 
@@ -313,7 +332,6 @@ else
 
         case 's'
             Value1InterpArray = Table.SuperHeat.s;
-
     end
 
     %general code:
@@ -326,11 +344,12 @@ else
         %max(a)
 
         if Value1 > max(a) || Value1 < min(a)
-            fprintf("\nLocally out of bounds, data discarded")
+            if debug
+                fprintf("\nLocally out of bounds, data discarded")
+            end
             NewTable.P(i) = 0;
         else
-            a
-            b = Table.SuperHeat.s(Ind1)
+            %b = Table.SuperHeat.s(Ind1)
 
             NewTable.T(i) = interp1(a,Table.SuperHeat.T(Ind1),Value1,'linear','extrap');
             NewTable.v(i) = interp1(a,Table.SuperHeat.v(Ind1),Value1,'linear','extrap');
@@ -363,19 +382,18 @@ end
 %the min and max of the property that was input will be equal to the input
 %value. For example the max and min of v for v = 0.1 is 0.1
 
-fprintf("superheated:")
-mins
-maxes
+if debug
+    fprintf("\nSuperheated:")
+    mins
+    maxes
+end
 
 clear('NewTable')
-
 
 %% then synthesize for the absolute max and min of each value
 for i = 1:length(fn)
     localMax.(fn{i}) = max(maxes.(fn{i}));
     localMin.(fn{i}) = min(mins.(fn{i}));
 end
-
-
 
 end

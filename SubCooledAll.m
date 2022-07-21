@@ -4,12 +4,12 @@ function SubState = SubCooledAll(Prop1,Value1,Prop2,Value2,Table,debug)
 %work the exact same. If you wanted to combine them into a single function
 %that takes subcooled / superheated state as input that would work
 
-debug = true;
+%debug = true;
 
 %reorder inputs, so that pressure is never the first input
 customOrder = {'T','v','u','h','s','x','P'};
 
-[Prop1,Value1,Prop2,Value2] = InputSort(Prop1,Value1,Prop2,Value2,customOrder);
+[Prop1,Value1,Prop2,Value2] = InputSort(Prop1,Value1,Prop2,Value2,customOrder,debug);
 %this allows the interpolation code to be further generalized
 
 if debug
@@ -27,7 +27,6 @@ NewTable.h = zeros(size(PVec));
 NewTable.s = zeros(size(PVec));
 
 switch Prop1
-
     case 'T'
         Value1InterpArray = Table.SubCooled.T;
 
@@ -42,7 +41,6 @@ switch Prop1
 
     case 's'
         Value1InterpArray = Table.SubCooled.s;
-
 end
 
 %general code:
@@ -53,31 +51,16 @@ for i = 1:numel(PVec)
     %Table.SubCooled.v(Ind)
     
     if Value1 > max(a) || Value1 < min(a)
-
-%         if nonrobust
-%             NewTable.T(i) = interp1(a,Table.SubCooled.T(Ind),Value1,'linear','extrap');
-%             NewTable.v(i) = interp1(a,Table.SubCooled.v(Ind),Value1,'linear','extrap');
-%             NewTable.h(i) = interp1(a,Table.SubCooled.h(Ind),Value1,'linear','extrap');
-%             NewTable.s(i) = interp1(a,Table.SubCooled.s(Ind),Value1,'linear','extrap');
-%             NewTable.u(i) = interp1(a,Table.SubCooled.u(Ind),Value1,'linear','extrap');
-%             fprintf("\nOut of bounds, data kept")
-%         else
-%         %Value1
-%         %min(a)
-%         %max(a)
-
-        fprintf("\nLocally out of bounds, data discarded")
+        if debug
+            fprintf("\nLocally out of bounds, data discarded")
+        end
         NewTable.P(i) = 0;
-        %end
-
     else
         NewTable.T(i) = interp1(a,Table.SubCooled.T(Ind),Value1,'linear','extrap');
         NewTable.v(i) = interp1(a,Table.SubCooled.v(Ind),Value1,'linear','extrap');
         NewTable.h(i) = interp1(a,Table.SubCooled.h(Ind),Value1,'linear','extrap');
         NewTable.s(i) = interp1(a,Table.SubCooled.s(Ind),Value1,'linear','extrap');
         NewTable.u(i) = interp1(a,Table.SubCooled.u(Ind),Value1,'linear','extrap');
-
-        %b = NewTable.v
     end
 
 end
@@ -91,7 +74,6 @@ NewTable.u = NewTable.u(NewTable.P~=0);
 NewTable.P = NewTable.P(NewTable.P~=0);
 
 switch Prop2
-
     case 'T'
         Value2InterpArray = NewTable.T;
 
@@ -109,18 +91,17 @@ switch Prop2
 
     case 'P'
         Value2InterpArray = NewTable.P;
-
 end
 
 switch Prop2
     case 'T'
-        limitArray = NewTable.T
+        limitArray = NewTable.T;
         %breakcase = sum(limitArray > Value2) < 1
     case 'P'
-        limitArray = NewTable.P
+        limitArray = NewTable.P;
         %breakcase = sum(limitArray > Value2) < 1
     case 'v'
-        limitArray = NewTable.v
+        limitArray = NewTable.v;
         %breakcase = sum(limitArray > Value2) < 1
     case 's'
         limitArray = NewTable.s;
@@ -134,18 +115,18 @@ switch Prop2
 end
 
 if debug
-    %fprintf("\nValue1 Interp\n")
+    fprintf("\nValue1 Interp\n")
     Value1InterpArray
 
-    %fprintf("\nValue2 Interp\n")
+    fprintf("\nValue2 Interp\n")
     Value2InterpArray
 
-    %fprintf("\nLimit Array\n")
+    fprintf("\nLimit Array\n")
     limitArray
 end
 
 if ~isempty(limitArray) && (Value2 > max(Value2InterpArray) || Value2 < min(Value2InterpArray))
-    fprintf("Second property out of range: %f",Value2)
+    if debug, fprintf("Second property out of range: %f",Value2); end
 end
 
 %before we compare to limitArray - the bigger break case for subcooled is

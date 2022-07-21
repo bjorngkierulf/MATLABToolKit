@@ -1,11 +1,11 @@
-function [outOfBounds,supercritical] = absBoundsCheck(Prop1,Value1,Prop2,Value2,Table,Critical)
+function [outOfBounds,supercritical] = absBoundsCheck(Prop1,Value1,Prop2,Value2,Table,Critical,debug)
 % function assigns two bools, global out of bounds and if the fluid is
 % supercritical
 
 outOfBounds = false; %default
 supercritical = 0; %default
 
-[Prop1,Value1,Prop2,Value2] = InputSort(Prop1,Value1,Prop2,Value2);
+[Prop1,Value1,Prop2,Value2] = InputSort(Prop1,Value1,Prop2,Value2,[],debug);
 %inputs should already be sorted but let's do it again
 
 %clc; clear; close all;
@@ -140,12 +140,17 @@ else
 end
 
 if Value1 < mins(ind1) || Value1 > maxes(ind1)
-    fprintf("Value out of range: %f", Value1)
+    if debug
+        fprintf("Value out of range: %f", Value1)
+    end
+
     outOfBounds = true;
 end
 
 if Value2 < mins(ind2) || Value2 > maxes(ind2)
-    fprintf("Value out of range: %f", Value2)
+    if debug
+        fprintf("Value out of range: %f", Value2)
+    end
     outOfBounds = true;
 end
 
@@ -160,12 +165,9 @@ criticals(6) = Critical.s;
 criticals(7) = 0; %quality doesn't have a critical value
 
 
-
-Value1
-Value2
-criticals
-ind1
-ind2
+if debug
+fprintf('\nValue1=%f, Value2=%f, Ind1=%f, Ind2=%f',Value1,Value2,ind1,ind2)
+end
 
 % for the purpose of this, I am defining supercritical as - either temp or
 % press is above supercritical threshold. Then, if it is on the vapor side,
@@ -175,7 +177,9 @@ ind2
 %criticals(ind2)
 if ind2 == 7 %ind2 is quality, x. it should not be supercritical
     if Value1 > criticals(ind1)
-        fprintf("ERROR: fluid property supercritical, but quality was specified")
+        if debug
+            fprintf("ERROR: fluid property supercritical, but quality was specified")
+        end
         outOfBounds = 1;
         supercritical = 0;
     else

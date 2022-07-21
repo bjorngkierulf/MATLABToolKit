@@ -1,8 +1,8 @@
-function Out = IsoLine(Prop,Value,Table,Critical,DebugPlot,debug)
-    % This function serves as a general iso-line creation tool, which will
+function Out = ProcessLine(Prop,Value,xMin,xMax,Table,Critical,DebugPlot,debug)
+    % This function serves as a general process-line creation tool, which will
     % be robust enough to handle iso T, P, v, and s lines on TV, PV, and TS
-    % diagrams
-
+    % diagrams. This will not handle unknown processes, polytropic
+    % processes, or other exotic processes.
 
 %     Prop = 's';
 %     Value = 3;
@@ -10,10 +10,7 @@ function Out = IsoLine(Prop,Value,Table,Critical,DebugPlot,debug)
 %     DebugPlot = 1;
 
 %number of points in each region - at the top for visibility
-NSubcooled = 5;
-%NSaturated = 5;
-NSuperheated = 30;
-NTemps = 300;
+Ndivisions = 20;
 
 % a = Table
 % %grab saturation data, why ever not?
@@ -23,9 +20,6 @@ NTemps = 300;
 % Vg = Table.Sat.vg;
 % Sf = Table.Sat.sf;
 % Sg = Table.Sat.sg;
-
-[localMin,localMax] = localBoundsCheck(Prop,Value,Table,Critical,debug);
-
 
 %switch to define variable on x axis and detect if supercritical. v and s
 %cannot be supercritical
@@ -44,41 +38,36 @@ switch Prop
 
 end
 
-xMin = localMin.(xProp);
-xMax = localMax.(xProp);
 if debug
-    fprintf('\nxMin=%f, xMax=%f',xMin,xMax)
+    %function inputs
+    fprintf('\nxMin=%f, xMax=$f',xMin,xMax)
 end
 
-%pause
-%dumb but easier
 switch xProp
     case 'v'
         
         if Value > max(Table.Sat.(Prop))
-            xValues = linspace(xMin,xMax,NSubcooled + NSuperheated);
+            xValues = linspace(xMin,xMax,Ndivisions);
 
         elseif Value < min(Table.Sat.(Prop))
             if debug
-                fprintf("\nError - property out of bounds (below triple point)")
+                fprintf("Error - property out of bounds (below triple point)")
                 xValues = [];
             end
 
         else %isobar / isotherm will be Liquid-Vapour mixture somewhere..
             vf = interp1(Table.Sat.(Prop),Table.Sat.vf,Value,'linear','extrap');
             vg = interp1(Table.Sat.(Prop),Table.Sat.vf,Value,'linear','extrap');
-            xValues = [linspace(xMin,vf,NSubcooled),linspace(vg,xMax,NSuperheated)];
+            xValues = [linspace(xMin,vf,Ndivisions),linspace(vg,xMax,Ndivisions)];
 
         end
 
     case 'T'
-        xValues = linspace(xMin,xMax,NTemps);
+        xValues = linspace(xMin,xMax,Ndivisions);
 
 end
 
-if debug
-    xValues
-end
+if debug, disp(xValues);end
 
 Out.v = zeros(size(xValues));
 Out.T = zeros(size(xValues));
@@ -98,14 +87,13 @@ for i = 1:numel(xValues)
     shouldBeEqual = State.(Prop);
     if abs(shouldBeEqual - Value) / Value > 0.01
         if debug
-            fprintf('\nxValue=%f',xValues(i));
+            disp(xValues(i));
             pause
         end
     end
 
     if debug
-        %fprintf(['\nState: ',State])
-        State
+        disp(State)
     end
 
 end

@@ -1,25 +1,21 @@
-function [Prop1New,Value1New,Prop2New,Value2New] = InputSort(Prop1,Value1,Prop2,Value2,order)
-
+function [Prop1New,Value1New,Prop2New,Value2New] = InputSort(Prop1,Value1,Prop2,Value2,order,debug)
     % This function takes inputs of two properties and values, and sorts
     % them into a standard order such that redundant switch statements can
     % be avoided
     % The order that inputs will be sorted into is:
     % ['P','T','v','u','h','s','x']
 
-    if ~exist('order','var')
+    if isempty(order)
+        %~exist('order','var')
         order = {'P','T','v','u','h','s','x'};
     end
-
+    
     ind1 = find(strcmp(order,Prop1));
     ind2 = find(strcmp(order,Prop2));
 
-    %Prop1
-    %Prop2
-
     %check that both input properties were matched in the list
-%     if ~(ind1 && ind2)
     if isempty(ind1) || isempty(ind2)
-        fprintf(["Either or both of the properties are invalid: " + Prop1 + ' ' + Prop2])
+        if debug, fprintf(["Either or both of the properties are invalid: " + Prop1 + ' ' + Prop2]); end
         
         %assign the defaults anyway
         Prop1New = Prop1;
@@ -33,7 +29,6 @@ function [Prop1New,Value1New,Prop2New,Value2New] = InputSort(Prop1,Value1,Prop2,
     if ind2 < ind1
         Prop1New = Prop2;
         Value1New = Value2;
-
         Prop2New = Prop1;
         Value2New = Value1;
 
@@ -45,6 +40,5 @@ function [Prop1New,Value1New,Prop2New,Value2New] = InputSort(Prop1,Value1,Prop2,
         Prop2New = Prop2;
         Value2New = Value2;
     end
-
 
 end %end function

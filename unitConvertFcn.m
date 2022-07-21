@@ -1,4 +1,4 @@
-function newVal = unitConvertFcn(oldVal,oldUnits,newUnits)
+function newVal = unitConvertFcn(oldVal,oldUnits,newUnits,debug)
 %unitConvert converts units between a specified old and new unit
 
 %temperature specific - check if they entered 'C' for celsius instead of

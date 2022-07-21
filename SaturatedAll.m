@@ -1,48 +1,6 @@
-function SatState = SaturatedAll(Prop1,Value1,Prop2,Value2,Table) %,saturateDetectPTTolerance)
-
+function SatState = SaturatedAll(Prop1,Value1,Prop2,Value2,Table,debug)
     % THIS FUNCTION RELIES ON THE INPUTS BEING IN A CERTAIN ORDER. given by
     % inputSort
-% clc; clear; close all;
-% 
-% 
-% % P: 1
-% % State: 'Saturated'
-% % T: 99.6300
-% % v: 0.2000
-% % x: 0.1175
-% % u: 662.8294
-% % h: 682.8256
-% % s: 2.0144
-% 
-% %
-% Prop1 = 'P';
-% Value1 = 1;
-% %Prop1 = 'P';
-% %Value1 = 5;
-% 
-% Prop2 = 'T';
-% Value2 = 99.63;
-% 
-% %Prop2 = 's';
-% %Value2 = 1;
-% %
-% % Prop2 = 'h';
-% % Value2 = 682.8256;
-% 
-% % Prop1 = 's';
-% % Value1 = 2.0144;
-% 
-% % Prop2 = 'v';
-% % Value2 = .2;
-% 
-% 
-% [Prop1,Value1,Prop2,Value2] = InputSort(Prop1,Value1,Prop2,Value2);
-% 
-% 
-% [Table,critical] = GenTableNew();
-% 
-% saturateDetectPTTolerance = 0.01;
-
 
 % Extracting Saturation Data
 Temp = Table.Sat.T;
@@ -60,10 +18,11 @@ Sg = Table.Sat.sg;
 %inputSort gives P before T
 if strcmp(Prop1,'P') && strcmp(Prop2,'T') %really this first thing just shouldn't be the case
     
+    if debug
     fprintf("P and T were entered when the fluid is saturated, " + ...
         "check that this is correct as these properties are " + ...
         "insufficient to determine the quality x")
-
+    end
     %find the temperature that it would be if it were saturated
     %Tsat = interp1(Press,Temp,Value1,'linear','extrap');
 
@@ -167,7 +126,9 @@ end
 
 %lets check real quick that things are valid and bounded
 if (numel(validInds) < 1) || max(xArray) > 1 || min(xArray) < 0
+    if debug
     fprintf("Something is out of bounds while calculating quality - state may not be saturated")
+    end
 end
 
 
@@ -177,14 +138,9 @@ value2Array = satFArray2(validInds) + xArray .* (satGArray2(validInds) - satFArr
 
 x = interp1(value2Array,xArray,Value2,'linear','extrap');
 
-%debug
-% figure(1)
-% plot(value2Array,xArray)
-
 end %end overarching flow control if else
-
 
 %function output
 SatState.x = x;
 
-end %end func
+end

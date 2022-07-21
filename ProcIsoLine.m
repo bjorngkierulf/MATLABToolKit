@@ -1,4 +1,4 @@
-function ProcOut = ProcIsoLine(Prop1,Value1,v1,v2,Table,Critical)
+function ProcOut = ProcIsoLine(Prop1,Value1,v1,v2,Table,Critical,debug)
 %relies on specific volume and specific entropy relationship being
 %monotonic
 %For an isovolumetric process, input P1, P2 as the limits in place of v1, v2

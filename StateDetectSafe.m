@@ -1,4 +1,4 @@
-function Out = StateDetectSafe(Prop1,Value1,Prop2,Value2,Table,critical)
+function Out = StateDetectSafe(Prop1,Value1,Prop2,Value2,Table,critical,debug)
 
 %this method of state detection works based on assuming that value1 is
 %either a saturated liquid or saturated vapour property value. Then it
@@ -7,25 +7,12 @@ function Out = StateDetectSafe(Prop1,Value1,Prop2,Value2,Table,critical)
 %But multiple rows if something else is given, because it is necessary to
 %look at both if it were saturated liquid and saturated vapour
 
-debug = true;
+%debug = true;
 
 if debug
-    fprintf("\nDebug Info for superheated")
+    fprintf("\nDebug Info for state detection")
     fprintf("\nProp1= " + Prop1 + ", Value1= %f, Prop2= " + Prop2 + ", Value2= %f",Value1,Value2);
 end
-
-% [outOfBounds,supercritical] = absBoundsCheck(Prop1,Value1,Prop2,Value2,Table,critical);
-% if outOfBounds
-%     %fprintf("Invalid Input, out of data bounds")
-% end
-% if supercritical == 1 % supercritical liquid
-% 
-% elseif supercritical == 2 %supercritical vapor
-% 
-%     
-% end
-
-
 
 %lets try to generalize this a bit further
 %also, this should return all the properties P, T, s, u, h, x... but ONLY
@@ -135,7 +122,9 @@ switch Prop1
             %both inclusive as 0 and 1 are valid
             Out.State = 'Saturated';
         else
-            fprintf("Invalid input, quality should be between 0 and 1")
+            if debug
+                fprintf("Invalid input, quality should be between 0 and 1")
+            end
         end
 
 end
@@ -194,7 +183,6 @@ else %neither property is P, T - UVHS section
     
     %interpolate for saturated vapour sg, vg properties
     if Value1 > min(Value1InterpArrayUpper) && Value1 < max(Value1InterpArrayUpper)
-
         SatState.TUpper = interp1(Value1InterpArrayUpper,Temp,Value1,'linear','extrap');
         SatState.vg = interp1(Value1InterpArrayUpper,Vg,Value1,'linear','extrap');
         SatState.ug = interp1(Value1InterpArrayUpper,Ug,Value1,'linear','extrap');
@@ -202,8 +190,6 @@ else %neither property is P, T - UVHS section
         SatState.sg = interp1(Value1InterpArrayUpper,Sg,Value1,'linear','extrap');
 
     elseif Value1 > min(Value1InterpArrayLower) && Value1 < max(Value1InterpArrayLower)
-        %Value1InterpArrayUpper
-        %Temp
         SatState.TUpper = interp1(Value1InterpArrayUpper,Temp,Value1,'linear','extrap');
         SatState.vg = interp1(Value1InterpArrayUpper,Vg,Value1,'linear','extrap');
         SatState.ug = interp1(Value1InterpArrayUpper,Ug,Value1,'linear','extrap');
@@ -256,7 +242,9 @@ switch Prop2
             %both inclusive as 0 and 1 are valid
             Out.State = 'Saturated';
         else
-            fprintf("Invalid input, quality should be between 0 and 1")
+            if debug
+                fprintf("Invalid input, quality should be between 0 and 1")
+            end
         end
 
 end
@@ -277,8 +265,4 @@ else
     Out.State = 'Saturated';
 end
 
-
-end %end func
-
-
-
+end

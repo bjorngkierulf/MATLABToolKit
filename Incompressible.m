@@ -1,8 +1,8 @@
-function Out = Incompressible(Prop1,Value1,Prop2,Value2,Table)
+function Out = Incompressible(Prop1,Value1,Prop2,Value2,Table,debug)
 
 %re-sort input properties so that P is last
 order = {'T','v','u','h','s','x','P'};
-[Prop1,Value1,Prop2,Value2] = InputSort(Prop1,Value1,Prop2,Value2,order);
+[Prop1,Value1,Prop2,Value2] = InputSort(Prop1,Value1,Prop2,Value2,order,debug);
 
 % Exctracting Saturation Data
 Temp = Table.Sat.T;
@@ -14,7 +14,7 @@ Sf = Table.Sat.sf;
 
 % check if either property is specific volume
 if strcmp(Prop1,'v') || strcmp(Prop2,'v')
-    fprintf('Incompressible model poorly posed using specific volume as input')
+    if debug, fprintf('Incompressible model poorly posed using specific volume as input'); end
 end
 
 % First Independent Property
@@ -22,7 +22,7 @@ switch Prop1
 
     case 'P'
         Value1InterpArray = Press;
-        fprintf("It should be sorted such that this never happens..")
+        if debug, fprintf("It should be sorted such that this never happens.."); end
 
     case 'T'
         Value1InterpArray = Temp;
@@ -44,7 +44,7 @@ switch Prop1
         Value1InterpArray = Sf;
 
     case 'x'
-        fprintf("Using incompressible model when quality is input - something is wrong")
+        if debug, fprintf("Using incompressible model when quality is input - something is wrong"); end
 
 end
 
@@ -72,4 +72,4 @@ end
 %then identifying the state is easy, as it is already known
 Out.State = 'SubCooled';
 
-end %end func
+end
