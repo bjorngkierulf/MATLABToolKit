@@ -1,5 +1,5 @@
 <deployment-project plugin="plugin.apptool" plugin-version="1.0">
-  <configuration build-checksum="515584329" file="/Users/bjorn/Documents/MATLAB/Git/MATLABToolKit/ThermoToolkit.prj" location="/Users/bjorn/Documents/MATLAB/Git/MATLABToolKit" name="ThermoToolkit" target="target.mlapps" target-name="Package App">
+  <configuration build-checksum="3422093916" file="/Users/bjorn/Documents/MATLAB/Git/MATLABToolKit/ThermoToolkit.prj" location="/Users/bjorn/Documents/MATLAB/Git/MATLABToolKit" name="ThermoToolkit" target="target.mlapps" target-name="Package App">
     <param.appname>ThermoToolkit</param.appname>
     <param.authnamewatermark>Bjorn Kierulf, Mir Masoud Ale Ali</param.authnamewatermark>
     <param.email>kierulf.b@northeastern.edu,aleali.m@northeastern.edu</param.email>
@@ -8,8 +8,8 @@
     <param.icons />
     <param.summary>Provides a user interface for fluid properties interpolation using steam tables</param.summary>
     <param.description />
-    <param.screenshot />
-    <param.version>0.1.3</param.version>
+    <param.screenshot>/private/var/folders/7f/1ywbrjm500q_3lxb1kxhqb980000gn/T/tpf8e733ad_eb09_4002_abca_d61b4f1669c3.png</param.screenshot>
+    <param.version>0.1.4</param.version>
     <param.products.name />
     <param.products.id />
     <param.products.version />
@@ -20,7 +20,6 @@
       <param.icon />
       <param.icons />
       <param.description />
-      <param.screenshot />
       <param.products.name />
       <param.products.id />
       <param.products.version />
@@ -30,28 +29,20 @@
       <file>${PROJECT_ROOT}/realApp.mlapp</file>
     </fileset.main>
     <fileset.depfun>
-      <file>${PROJECT_ROOT}/ConstVolLine.m</file>
       <file>${PROJECT_ROOT}/GenTableNew.m</file>
       <file>${PROJECT_ROOT}/GenTableR134a.m</file>
       <file>${PROJECT_ROOT}/Incompressible.m</file>
       <file>${PROJECT_ROOT}/InputSort.m</file>
-      <file>${PROJECT_ROOT}/IsentropicLine.m</file>
-      <file>${PROJECT_ROOT}/IsoBarLineNew.m</file>
-      <file>${PROJECT_ROOT}/IsoThermLine.m</file>
+      <file>${PROJECT_ROOT}/IsoLine.m</file>
       <file>${PROJECT_ROOT}/PVTData.m</file>
       <file>${PROJECT_ROOT}/PVTData.mat</file>
-      <file>${PROJECT_ROOT}/ProcIsoLine.m</file>
       <file>${PROJECT_ROOT}/ProcessDetect.m</file>
-      <file>${PROJECT_ROOT}/PropertyCalculate.m</file>
+      <file>${PROJECT_ROOT}/ProcessLine.m</file>
       <file>${PROJECT_ROOT}/PropertyCalculateSafe.m</file>
       <file>${PROJECT_ROOT}/SaturatedAll.m</file>
-      <file>${PROJECT_ROOT}/StateDetect.m</file>
       <file>${PROJECT_ROOT}/StateDetectSafe.m</file>
-      <file>${PROJECT_ROOT}/SubCooled.m</file>
       <file>${PROJECT_ROOT}/SubCooledAll.m</file>
-      <file>${PROJECT_ROOT}/SuperHeat.m</file>
       <file>${PROJECT_ROOT}/SuperHeatAll.m</file>
-      <file>${PROJECT_ROOT}/SuperHeatR.m</file>
       <file>${PROJECT_ROOT}/XSaturated.m</file>
       <file>${PROJECT_ROOT}/absBoundsCheck.m</file>
       <file>${PROJECT_ROOT}/breakCaseSuperHeat.m</file>
