@@ -58,7 +58,22 @@ switch xProp
         else %isobar / isotherm will be Liquid-Vapour mixture somewhere..
             vf = interp1(Table.Sat.(Prop),Table.Sat.vf,Value,'linear','extrap');
             vg = interp1(Table.Sat.(Prop),Table.Sat.vf,Value,'linear','extrap');
-            xValues = [linspace(xMin,vf,Ndivisions),linspace(vg,xMax,Ndivisions)];
+            
+            % check where bounds are relative to saturation. We want a
+            % point, in order, at saturation - if it is in range
+            if (vf > xMin && vf < xMax) && (vg > xMin && vg < xMax)
+                xValues = [linspace(xMin,vf,Ndivisions),linspace(vg,xMax,Ndivisions)];
+
+            elseif (vf > xMin && vf < xMax)
+                xValues = [linspace(xMin,vf,Ndivisions),linspace(vf,xMax,Ndivisions)];
+
+            elseif (vg > xMin && vg < xMax)
+                xValues = [linspace(xMin,vg,Ndivisions),linspace(vg,xMax,Ndivisions)];
+
+            else
+
+                xValues = linspace(xMin,xMax,Ndivisions);
+            end
 
         end
 

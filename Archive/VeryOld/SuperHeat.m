@@ -2,6 +2,13 @@ function SuperState = SuperHeat(P,Prop,Value,Table)
 
 
     % SuperHear Verification
+%     Sample  = StateDetect('P',P,Prop,Value,Table);
+% 
+%     if ~strcmp(Sample.State , 'SuperHeat')
+%             disp('SuperHeat Data Error!!')
+%             SuperState = [];
+%         return
+%     end
 
 % Inputs Description:
 
@@ -43,15 +50,11 @@ switch Prop
     hP2 = interp1(Table.SuperHeat.T(IndP2),Table.SuperHeat.h(IndP2),Value,'linear','extrap');
     h = interp1([P1,P2],[hP1,hP2],P,'linear','extrap');
     
-    sP1 = interp1(Table.SuperHeat.T(IndP1),Table.SuperHeat.s(IndP1),Value,'linear','extrap');
-    sP2 = interp1(Table.SuperHeat.T(IndP2),Table.SuperHeat.s(IndP2),Value,'linear','extrap');
-    s = interp1([P1,P2],[sP1,sP2],P,'linear','extrap');
-    
     SuperState.T = Value;
     SuperState.v = v;
     SuperState.u = u;
-    SuperState.h = h; 
-    SuperState.s = s;
+    SuperState.h = h;
+    
 
     case 'v'
         
@@ -67,16 +70,11 @@ switch Prop
     hP2 = interp1(Table.SuperHeat.v(IndP2),Table.SuperHeat.h(IndP2),Value,'linear','extrap');
     h = interp1([P1,P2],[hP1,hP2],P,'linear','extrap');
     
-    sP1 = interp1(Table.SuperHeat.v(IndP1),Table.SuperHeat.s(IndP1),Value,'linear','extrap');
-    sP2 = interp1(Table.SuperHeat.v(IndP2),Table.SuperHeat.s(IndP2),Value,'linear','extrap');
-    s = interp1([P1,P2],[sP1,sP2],P,'linear','extrap');
-    
-    
     SuperState.T = T;
     SuperState.v = Value;
     SuperState.u = u;
     SuperState.h = h;
-    SuperState.s = s;
+    
     
     case 'u'
         
@@ -92,15 +90,10 @@ switch Prop
     hP2 = interp1(Table.SuperHeat.u(IndP2),Table.SuperHeat.h(IndP2),Value,'linear','extrap');
     h = interp1([P1,P2],[hP1,hP2],P,'linear','extrap');
     
-    sP1 = interp1(Table.SuperHeat.u(IndP1),Table.SuperHeat.s(IndP1),Value,'linear','extrap');
-    sP2 = interp1(Table.SuperHeat.u(IndP2),Table.SuperHeat.s(IndP2),Value,'linear','extrap');
-    s = interp1([P1,P2],[sP1,sP2],P,'linear','extrap');
-    
     SuperState.T = T;
     SuperState.v = v;
     SuperState.u = Value;
     SuperState.h = h;
-    SuperState.s = s;
     
     case 'h'
         
@@ -116,40 +109,10 @@ switch Prop
     uP2 = interp1(Table.SuperHeat.h(IndP2),Table.SuperHeat.u(IndP2),Value,'linear','extrap');
     u = interp1([P1,P2],[uP1,uP2],P,'linear','extrap');
     
-    sP1 = interp1(Table.SuperHeat.h(IndP1),Table.SuperHeat.s(IndP1),Value,'linear','extrap');
-    sP2 = interp1(Table.SuperHeat.h(IndP2),Table.SuperHeat.s(IndP2),Value,'linear','extrap');
-    s = interp1([P1,P2],[sP1,sP2],P,'linear','extrap');
-    
     SuperState.T = T;
     SuperState.v = v;
     SuperState.u = u;
     SuperState.h = Value;
-    SuperState.s = s;
-    
-    case 's'
-        
-        TP1 = interp1(Table.SuperHeat.s(IndP1),Table.SuperHeat.T(IndP1),Value,'linear','extrap');
-        TP2 = interp1(Table.SuperHeat.s(IndP2),Table.SuperHeat.T(IndP2),Value,'linear','extrap');
-        T = interp1([P1,P2],[TP1,TP2],P,'linear','extrap');
-        
-        vP1 = interp1(Table.SuperHeat.s(IndP1),Table.SuperHeat.v(IndP1),Value,'linear','extrap');
-        vP2 = interp1(Table.SuperHeat.s(IndP2),Table.SuperHeat.v(IndP2),Value,'linear','extrap');
-        v = interp1([P1,P2],[vP1,vP2],P,'linear','extrap');
-        
-        uP1 = interp1(Table.SuperHeat.s(IndP1),Table.SuperHeat.u(IndP1),Value,'linear','extrap');
-        uP2 = interp1(Table.SuperHeat.s(IndP2),Table.SuperHeat.u(IndP2),Value,'linear','extrap');
-        u = interp1([P1,P2],[uP1,uP2],P,'linear','extrap');
-        
-        hP1 = interp1(Table.SuperHeat.s(IndP1),Table.SuperHeat.h(IndP1),Value,'linear','extrap');
-        hP2 = interp1(Table.SuperHeat.s(IndP2),Table.SuperHeat.h(IndP2),Value,'linear','extrap');
-        h = interp1([P1,P2],[hP1,hP2],P,'linear','extrap');
-        
-        SuperState.T = T;
-        SuperState.v = v;
-        SuperState.u = u;
-        SuperState.h = h;
-        SuperState.s = Value;
-    
     
     
 end
